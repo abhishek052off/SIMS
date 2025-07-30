@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using SIMSWeb.Business.IService;
@@ -35,14 +37,33 @@ namespace SIMSWeb.Controllers
             }
             else
             {
-                var token = GenerateToken(user);
-                return RedirectToAction("Login", "Login", user);
+                //var token = GenerateToken(user);
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, user.Name),
+                    new Claim(ClaimTypes.Role, user.Role),
+                    new Claim(ClaimTypes.Email, user.Email)
+                };
+
+                var identity = new ClaimsIdentity(claims, "MyCookieAuth");
+                var principal = new ClaimsPrincipal(identity);
+
+                await HttpContext.SignInAsync("MyCookieAuth", principal);
+
+                return RedirectToAction("Profile", "Home");
+
             }
 
-            return View(user);
+            return View();
         }
 
-        private string GenerateToken(User user)
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync("MyCookieAuth");
+            return RedirectToAction("Index", "Login");
+        }
+
+       /* private string GenerateToken(User user)
         {
             var jwtConfig = _configuration.GetSection("JWTSettings");
 
@@ -72,5 +93,6 @@ namespace SIMSWeb.Controllers
 
             return tokenHandler.WriteToken(token);
         }
+       */
     }
 }

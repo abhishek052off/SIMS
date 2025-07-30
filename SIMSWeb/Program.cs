@@ -3,9 +3,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SIMSWeb.Business.IService;
 using SIMSWeb.Business.Service;
+using SIMSWeb.CustomMiddleware;
 using SIMSWeb.Data.Context;
 using SIMSWeb.Data.IRepository;
 using SIMSWeb.Data.Repository;
+using SIMSWeb.Model.Models;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,7 +20,7 @@ option.UseSqlServer(builder.Configuration.GetConnectionString("SIMSDBConnection"
 
 var jwtSettings = builder.Configuration.GetSection("JWTSettings");
 
-builder.Services.AddAuthentication(option =>
+/*builder.Services.AddAuthentication(option =>
 {
     option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -38,9 +40,24 @@ builder.Services.AddAuthentication(option =>
         IssuerSigningKey = new SymmetricSecurityKey(key)
     };
 
-});
+});*/
 
-builder.Services.AddAuthorization();
+builder.Services.AddAuthentication("MyCookieAuth")
+    .AddCookie("MyCookieAuth", options =>
+    {
+        options.Cookie.Name = "MyAuthCookie";
+        options.LoginPath = "/Login";
+        options.AccessDeniedPath = "/AccessDenied";
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+    });
+
+builder.Services.AddScoped<UserSession>();
+
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+});
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
@@ -62,6 +79,7 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseMiddleware<UserSessionMiddleware>();
 
 app.MapControllerRoute(
     name: "Login",

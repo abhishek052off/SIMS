@@ -51,5 +51,14 @@ namespace SIMSWeb.Data.Repository
                 .FirstOrDefaultAsync() ?? throw new NotFoundException("User not found");
             return user;
         }
+
+        public async Task<User> GetUserById(int id)
+        {
+            var user = await _dbContext.Users
+                .Where(u => u.Id == id)
+                .FirstOrDefaultAsync() ?? throw new NotFoundException("User not found");
+            return user;
+
+        }
     }
 }

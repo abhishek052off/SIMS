@@ -1,4 +1,5 @@
-﻿using SIMSWeb.Business.IService;
+﻿using Microsoft.EntityFrameworkCore;
+using SIMSWeb.Business.IService;
 using SIMSWeb.Data.Exceptions;
 using SIMSWeb.Data.IRepository;
 using SIMSWeb.Model.Models;
@@ -21,7 +22,6 @@ namespace SIMSWeb.Business.Service
         {
             await _userRepository.AddUser(user);
         }
-
 
         public async Task<User> AuthenticateUser(string email, string password)
         {
@@ -49,6 +49,16 @@ namespace SIMSWeb.Business.Service
         public async Task UpdateUser(User user)
         {
             await _userRepository.UpdateUser(user);
+        }
+
+        public async Task<User> GetUserById(int id)
+        {
+            return await _userRepository.GetUserById(id);
+        }
+
+        public async Task<User> GetUserByEmail(string email)
+        {
+            return await _userRepository.GetUserByEmail(email);
         }
     }
 }
