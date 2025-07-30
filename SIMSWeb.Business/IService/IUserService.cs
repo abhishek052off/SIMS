@@ -11,7 +11,7 @@ namespace SIMSWeb.Business.IService
     {
         Task<List<User>> GetUsers();
         Task AddUser(User user);
-        Task UpdateUser(User user);
+        Task UpdateUser(int? id);
         Task DeleteUser(User user);
         Task<User> AuthenticateUser(string email, string password);
         Task<User> GetUserById(int id);

@@ -69,7 +69,9 @@ namespace SIMSWeb.Data.Context
                         Name = "Admin",
                         Email = "admin@gmail.com",
                         Password = "admin",
-                        Role = "Admin"
+                        Role = "Admin",
+                        CreatedAt = DateTime.Now,
+
                     },
                     new User
                     {
@@ -77,7 +79,8 @@ namespace SIMSWeb.Data.Context
                         Name = "Keya",
                         Email = "keya@gmail.com",
                         Password = "stud",
-                        Role = "Student"
+                        Role = "Student",
+                         CreatedAt = DateTime.Now,
                     },
                     new User
                     {
@@ -85,7 +88,8 @@ namespace SIMSWeb.Data.Context
                         Name = "Tiya",
                         Email = "tiya@gmail.com",
                         Password = "staff",
-                        Role = "Teacher"
+                        Role = "Teacher",
+                        CreatedAt = DateTime.Now,
                     },
                     new User
                     {
@@ -93,7 +97,8 @@ namespace SIMSWeb.Data.Context
                         Name = "Naveen",
                         Email = "nav@gmail.com",
                         Password = "staff",
-                        Role = "Teacher"
+                        Role = "Teacher",
+                        CreatedAt = DateTime.Now,
                     },
                     new User
                     {
@@ -101,34 +106,35 @@ namespace SIMSWeb.Data.Context
                         Name = "Sid",
                         Email = "sid@gmail.com",
                         Password = "stud",
-                        Role = "Student"
+                        Role = "Student",
+                        CreatedAt = DateTime.Now,
                     }
                   );
 
             // Seed Students
             modelBuilder.Entity<Student>().HasData(
-                new Student { Id = 1, UserId = 2, StudentName = "Keya" },
-                new Student { Id = 2, UserId = 3, StudentName = "Sid" }
+                new Student { Id = 1, UserId = 2, EnrollmentDate = DateTime.Now },
+                new Student { Id = 2, UserId = 3, EnrollmentDate = DateTime.Now }
             );
 
             // Seed Teachers
             modelBuilder.Entity<Teacher>().HasData(
-                new Teacher { Id = 1, UserId = 3, TeacherName = "Tiya", Department = "Mathematics" },
-                new Teacher { Id = 2, UserId = 4, TeacherName = "Naveen", Department = "Physics" }
+                new Teacher { Id = 1, UserId = 3,  Department = "Mathematics", HireDate = DateTime.Now },
+                new Teacher { Id = 2, UserId = 4, Department = "Physics", HireDate = DateTime.Now }
             );
 
             // Seed Courses
             modelBuilder.Entity<Course>().HasData(
-                new Course { Id = 1, Name = "Algebra", TeacherId = 1 },
-                new Course { Id = 2, Name = "Physics 101", TeacherId = 2 }
+                new Course { Id = 1, Name = "Algebra", TeacherId = 1, IsActive = true },
+                new Course { Id = 2, Name = "Physics 101", TeacherId = 2, IsActive = true }
             );
 
 
             // Seed Many-to-Many Relationship (Enrollment)
             modelBuilder.Entity<Enrollment>().HasData(
-                new Enrollment { StudentId = 1, CourseId = 1 },  
-                new Enrollment { StudentId = 1, CourseId = 2 },  
-                new Enrollment { StudentId = 2, CourseId = 2 }   
+                new Enrollment { StudentId = 1, CourseId = 1, Term = 1, Marks = 70 },  
+                new Enrollment { StudentId = 1, CourseId = 2, Term = 1, Marks = 65 },  
+                new Enrollment { StudentId = 2, CourseId = 2, Term = 1, Marks = 50 }   
             );
         }
     }

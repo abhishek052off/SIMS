@@ -9,7 +9,7 @@ namespace SIMSWeb.Model.Models
     public class Student
     {
         public int Id { get; set; }
-        public string StudentName { get; set; }
+        public DateTime EnrollmentDate { get; set; }
 
         public List<Enrollment> Enrollments { get; set; }
 

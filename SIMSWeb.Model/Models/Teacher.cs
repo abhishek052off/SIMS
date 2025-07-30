@@ -9,8 +9,8 @@ namespace SIMSWeb.Model.Models
     public class Teacher
     {
         public int Id { get; set; }
-        public string TeacherName { get; set; }
-        public string Department { get; set; }
+        public DateTime HireDate { get; set; }
+        public string? Department { get; set; }
 
         public List<Course> Courses { get; set; }
 

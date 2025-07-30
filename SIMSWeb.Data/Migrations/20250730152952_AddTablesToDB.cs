@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -17,7 +18,8 @@ namespace SIMSWeb.Data.Migrations
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Role = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Role = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -30,7 +32,7 @@ namespace SIMSWeb.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    StudentName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    EnrollmentDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -50,8 +52,8 @@ namespace SIMSWeb.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    TeacherName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Department = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    HireDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Department = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -72,6 +74,7 @@ namespace SIMSWeb.Data.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
                     TeacherId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -89,7 +92,10 @@ namespace SIMSWeb.Data.Migrations
                 columns: table => new
                 {
                     StudentId = table.Column<int>(type: "int", nullable: false),
-                    CourseId = table.Column<int>(type: "int", nullable: false)
+                    CourseId = table.Column<int>(type: "int", nullable: false),
+                    Term = table.Column<int>(type: "int", nullable: false),
+                    Marks = table.Column<double>(type: "float", nullable: false),
+                    Comments = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -108,58 +114,58 @@ namespace SIMSWeb.Data.Migrations
 
             migrationBuilder.InsertData(
                 table: "Users",
-                columns: new[] { "Id", "Email", "Name", "Password", "Role" },
+                columns: new[] { "Id", "CreatedAt", "Email", "Name", "Password", "Role" },
                 values: new object[,]
                 {
-                    { 1, "admin@gmail.com", "Admin", "admin", "Admin" },
-                    { 2, "keya@gmail.com", "Keya", "stud", "Student" },
-                    { 3, "tiya@gmail.com", "Tiya", "staff", "Teacher" },
-                    { 4, "nav@gmail.com", "Naveen", "staff", "Teacher" },
-                    { 5, "sid@gmail.com", "Sid", "stud", "Student" }
+                    { 1, new DateTime(2025, 7, 30, 20, 59, 51, 955, DateTimeKind.Local).AddTicks(3704), "admin@gmail.com", "Admin", "admin", "Admin" },
+                    { 2, new DateTime(2025, 7, 30, 20, 59, 51, 955, DateTimeKind.Local).AddTicks(3713), "keya@gmail.com", "Keya", "stud", "Student" },
+                    { 3, new DateTime(2025, 7, 30, 20, 59, 51, 955, DateTimeKind.Local).AddTicks(3714), "tiya@gmail.com", "Tiya", "staff", "Teacher" },
+                    { 4, new DateTime(2025, 7, 30, 20, 59, 51, 955, DateTimeKind.Local).AddTicks(3715), "nav@gmail.com", "Naveen", "staff", "Teacher" },
+                    { 5, new DateTime(2025, 7, 30, 20, 59, 51, 955, DateTimeKind.Local).AddTicks(3716), "sid@gmail.com", "Sid", "stud", "Student" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Students",
-                columns: new[] { "Id", "StudentName", "UserId" },
+                columns: new[] { "Id", "EnrollmentDate", "UserId" },
                 values: new object[,]
                 {
-                    { 1, "Keya", 2 },
-                    { 2, "Sid", 3 }
+                    { 1, new DateTime(2025, 7, 30, 20, 59, 51, 955, DateTimeKind.Local).AddTicks(3793), 2 },
+                    { 2, new DateTime(2025, 7, 30, 20, 59, 51, 955, DateTimeKind.Local).AddTicks(3794), 3 }
                 });
 
             migrationBuilder.InsertData(
                 table: "Teachers",
-                columns: new[] { "Id", "Department", "TeacherName", "UserId" },
+                columns: new[] { "Id", "Department", "HireDate", "UserId" },
                 values: new object[,]
                 {
-                    { 1, "Mathematics", "Tiya", 3 },
-                    { 2, "Physics", "Naveen", 4 }
+                    { 1, "Mathematics", new DateTime(2025, 7, 30, 20, 59, 51, 955, DateTimeKind.Local).AddTicks(3801), 3 },
+                    { 2, "Physics", new DateTime(2025, 7, 30, 20, 59, 51, 955, DateTimeKind.Local).AddTicks(3802), 4 }
                 });
 
             migrationBuilder.InsertData(
                 table: "Courses",
-                columns: new[] { "Id", "Name", "TeacherId" },
-                values: new object[] { 1, "Algebra", 1 });
+                columns: new[] { "Id", "IsActive", "Name", "TeacherId" },
+                values: new object[] { 1, true, "Algebra", 1 });
 
             migrationBuilder.InsertData(
                 table: "Courses",
-                columns: new[] { "Id", "Name", "TeacherId" },
-                values: new object[] { 2, "Physics 101", 2 });
+                columns: new[] { "Id", "IsActive", "Name", "TeacherId" },
+                values: new object[] { 2, true, "Physics 101", 2 });
 
             migrationBuilder.InsertData(
                 table: "Enrollments",
-                columns: new[] { "CourseId", "StudentId" },
-                values: new object[] { 1, 1 });
+                columns: new[] { "CourseId", "StudentId", "Comments", "Marks", "Term" },
+                values: new object[] { 1, 1, "", 70.0, 1 });
 
             migrationBuilder.InsertData(
                 table: "Enrollments",
-                columns: new[] { "CourseId", "StudentId" },
-                values: new object[] { 2, 1 });
+                columns: new[] { "CourseId", "StudentId", "Comments", "Marks", "Term" },
+                values: new object[] { 2, 1, "", 65.0, 1 });
 
             migrationBuilder.InsertData(
                 table: "Enrollments",
-                columns: new[] { "CourseId", "StudentId" },
-                values: new object[] { 2, 2 });
+                columns: new[] { "CourseId", "StudentId", "Comments", "Marks", "Term" },
+                values: new object[] { 2, 2, "", 50.0, 1 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Courses_TeacherId",

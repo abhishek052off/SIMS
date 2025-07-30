@@ -3,6 +3,7 @@ using SIMSWeb.Business.IService;
 using SIMSWeb.Data.Exceptions;
 using SIMSWeb.Data.IRepository;
 using SIMSWeb.Model.Models;
+using SIMSWeb.ConstantsAndUtilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,13 +15,38 @@ namespace SIMSWeb.Business.Service
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
-        public UserService(IUserRepository userRepository)
+        private readonly IStudentRepository _studentRepository;
+        private readonly ITeacherRepository _teacherRepository;
+        public UserService(IUserRepository userRepository, IStudentRepository studentRepository, ITeacherRepository teacherRepository)
         {
             _userRepository = userRepository;
+            _studentRepository = studentRepository;
+            _teacherRepository = teacherRepository;
         }
+
         public async Task AddUser(User user)
         {
             await _userRepository.AddUser(user);
+            if (user.Role == UsersConstants.STUDENT_ROLE)
+            {
+                var student = new Student
+                {
+                    UserId = user.Id,
+                    EnrollmentDate = DateTime.Now,
+                };
+
+                await _studentRepository.AddStudent(student);
+            }
+            else if (user.Role == UsersConstants.TEACHER_ROLE)
+            {
+                var teacher = new Teacher
+                {
+                    UserId = user.Id,
+                    HireDate = DateTime.Now,
+                };
+
+                await _teacherRepository.AddTeacher(teacher);
+            }
         }
 
         public async Task<User> AuthenticateUser(string email, string password)
@@ -46,9 +72,19 @@ namespace SIMSWeb.Business.Service
             return users;
         }
 
-        public async Task UpdateUser(User user)
+        public async Task UpdateUser(int? id)
         {
-            await _userRepository.UpdateUser(user);
+            if (String.IsNullOrEmpty(id.ToString()) || id == 0)
+            {
+                throw new NotFoundException("Not a valid Id");
+            }
+
+            if (id.HasValue)
+            {
+                User? user = await _userRepository.GetUserById(id.Value) ?? throw new NotFoundException("User not found");
+                await _userRepository.UpdateUser(user);
+            }
+
         }
 
         public async Task<User> GetUserById(int id)

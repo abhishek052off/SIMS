@@ -21,13 +21,12 @@ namespace SIMSWeb.Controllers
             _userService = userService;
             _session = session;
         }
-
+        
         public IActionResult Index()
         {
             return View();
         }
 
-        [Route("My-Profile")]
         public async Task<ActionResult> Profile()
         {
             if (!string.IsNullOrEmpty(_session.Email)) {

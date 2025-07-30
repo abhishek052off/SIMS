@@ -14,5 +14,9 @@ namespace SIMSWeb.Model.Models
 
         public Student Student { get; set; }       
         public Course Course { get; set; }
+
+        public int Term { get; set; }
+        public double Marks { get; set; }
+        public string Comments { get; set; } = string.Empty;
     }
 }
