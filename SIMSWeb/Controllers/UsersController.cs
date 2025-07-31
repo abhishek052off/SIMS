@@ -50,20 +50,20 @@ namespace SIMSWeb.Controllers
             {
                 new SelectListItem
                 {
-                    Text = UsersConstants.ADMIN_ROLE.ToUpper(),
+                    Text = UsersConstants.ADMIN_ROLE,
                     Value = UsersConstants.ADMIN_ROLE
                 },
                 new SelectListItem
                 {
-                    Text = UsersConstants.TEACHER_ROLE.ToUpper(),
+                    Text = UsersConstants.TEACHER_ROLE,
                     Value = UsersConstants.TEACHER_ROLE
                 },
                 new SelectListItem
                 {
-                    Text = UsersConstants.STUDENT_ROLE.ToUpper(),
+                    Text = UsersConstants.STUDENT_ROLE,
                     Value = UsersConstants.STUDENT_ROLE
                 }
-            });
+            }, "Value", "Text");
 
             manageUsersVM.Paginations = new PaginatedResult<ManageUsersModel>
             {
