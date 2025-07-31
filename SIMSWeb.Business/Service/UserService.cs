@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SIMSWeb.Business.ServiceDTO.User;
 
 namespace SIMSWeb.Business.Service
 {
@@ -61,29 +62,80 @@ namespace SIMSWeb.Business.Service
             return user;
         }
 
-        public async Task DeleteUser(User user)
+        public async Task DeleteUser(int id)
         {
-            await _userRepository.DeleteUser(user);
+            await _userRepository.DeleteUser(id);
         }
 
-        public async Task<List<User>> GetUsers()
+        public async Task<List<User>> GetUsers(string userRole, string searchText, int skip, int pageSize)
         {
-            var users = await _userRepository.GetUsers();
+            var users = await _userRepository.GetUsers(userRole, searchText, skip, pageSize);
             return users;
         }
 
-        public async Task UpdateUser(int? id)
+        public async Task UpdateUser(UpdateUserDTO userRequest)
         {
-            if (String.IsNullOrEmpty(id.ToString()) || id == 0)
+            var user = await _userRepository.GetUserById(userRequest.Id);
+            if (user == null)
             {
-                throw new NotFoundException("Not a valid Id");
+                throw new NotFoundException("User not found.");
             }
 
-            if (id.HasValue)
+            if (user.Name != userRequest.Name)
             {
-                User? user = await _userRepository.GetUserById(id.Value) ?? throw new NotFoundException("User not found");
-                await _userRepository.UpdateUser(user);
+                user.Name = userRequest.Name;
             }
+
+            if (user.Email != userRequest.Email)
+            {
+                user.Email = userRequest.Email;
+            }
+
+            if (user.Password != userRequest.Password)
+            {
+                user.Password = userRequest.Password;
+            }
+
+            if (user.Role != userRequest.Role)
+            {
+                user.Role = userRequest.Role;
+
+                // Existing Role = Teacher now changed to Student
+                if (userRequest.Role == UsersConstants.STUDENT_ROLE)
+                {
+                    //Add to Student table
+                    var student = new Student
+                    {
+                        UserId = user.Id,
+                        EnrollmentDate = DateTime.Now,
+                    };
+
+                    await _studentRepository.AddStudent(student);
+
+                    //Remove from Teacher table
+                    var teacher = await _teacherRepository.GetTeacherByUserId(user.Id);
+
+                    await _teacherRepository.DeleteTeacher(teacher);
+
+                }
+                else if (user.Role == UsersConstants.TEACHER_ROLE)
+                {
+                    //Remove from Student table
+                    var student = await _studentRepository.GetStudentByUserId(user.Id);
+
+                    await _studentRepository.DeleteStudent(student);
+
+                    var teacher = new Teacher
+                    {
+                        UserId = user.Id,
+                        HireDate = DateTime.Now,
+                    };
+
+                    await _teacherRepository.AddTeacher(teacher);
+                }
+            }
+
+            await _userRepository.UpdateUser(user);
 
         }
 
@@ -95,6 +147,11 @@ namespace SIMSWeb.Business.Service
         public async Task<User> GetUserByEmail(string email)
         {
             return await _userRepository.GetUserByEmail(email);
+        }
+
+        public async Task<int> GetUserCount(string userRole, string searchText)
+        {
+            return await _userRepository.GetUserCount(userRole,searchText);
         }
     }
 }

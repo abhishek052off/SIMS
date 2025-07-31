@@ -14,5 +14,6 @@ namespace SIMSWeb.Data.IRepository
         Task UpdateTeacher(Teacher teacher);
         Task DeleteTeacher(Teacher teacher);
         Task<Teacher> GetTeacherById(int id);
+        Task<Teacher> GetTeacherByUserId(int id);
     }
 }

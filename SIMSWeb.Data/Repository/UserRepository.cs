@@ -26,16 +26,31 @@ namespace SIMSWeb.Data.Repository
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task DeleteUser(User user)
+        public async Task DeleteUser(int id)
         {
+            var user = await GetUserById(id);
             _dbContext.Users.Remove(user);
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<List<User>> GetUsers()
+        public async Task<List<User>> GetUsers(string userRole, string searchText, int skip, int pageSize)
         {
-            var users = await _dbContext.Users.ToListAsync();
-            return users;
+            IQueryable<User> users = _dbContext.Users;
+
+            if (!string.IsNullOrEmpty(userRole))
+            {
+                users = users.Where(x => x.Role == userRole);
+            }
+
+            if (!string.IsNullOrEmpty(searchText))
+            {
+                users = users.Where(u => u.Name.Contains(searchText)
+                || u.Email.Contains(searchText));
+
+            }
+
+            users = users.Skip(skip).Take(pageSize);
+            return await users.ToListAsync();
         }
 
         public async Task UpdateUser(User user)
@@ -59,6 +74,25 @@ namespace SIMSWeb.Data.Repository
                 .FirstOrDefaultAsync() ?? throw new NotFoundException("User not found");
             return user;
 
+        }
+
+        public async Task<int> GetUserCount(string userRole, string searchText)
+        {
+            IQueryable<User> users = _dbContext.Users;
+
+            if (!string.IsNullOrEmpty(userRole))
+            {
+                users = users.Where(x => x.Role == userRole);
+            }
+
+            if (!string.IsNullOrEmpty(searchText))
+            {
+                users = users.Where(u => u.Name.Contains(searchText)
+                || u.Email.Contains(searchText));
+
+            }
+
+            return await users.CountAsync();
         }
     }
 }

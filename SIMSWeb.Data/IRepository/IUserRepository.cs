@@ -9,11 +9,12 @@ namespace SIMSWeb.Data.IRepository
 {
     public interface IUserRepository
     {
-        Task<List<User>> GetUsers();
+        Task<List<User>> GetUsers(string userRole, string searchText, int skip, int pageSize);
         Task AddUser(User user);
         Task UpdateUser(User user);
-        Task DeleteUser(User user);
+        Task DeleteUser(int id);
         Task<User> GetUserByEmail(string email);
         Task<User> GetUserById(int id);
+        Task<int> GetUserCount(string userRole, string searchText);
     }
 }

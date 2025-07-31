@@ -1,0 +1,31 @@
+﻿@using SIMSWeb.Models.User
+@model DeleteUserModel
+
+<form method="post">
+    <div class="p-3 pt-4 gap-2">
+        <div class="row text-danger">
+            <h2>Delete User</h2>
+            <hr />
+        </div>
+        <div asp-validation-summary="ModelOnly"></div>
+        <div class="mb-3">
+            <label>Category Name</label>
+            <input asp-for="Name" disabled type="text" class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label>Email</label>
+            <input asp-for="Email" disabled type="email" class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label>Role</label>
+            <input asp-for="Role" disabled class="form-control" />
+        </div>
+
+        <div class="row">
+            <div class="col-6">
+                <button asp-controller="Users" asp-action="DeleteUser" class="btn btn-danger">Delete</button>
+                <button asp-controller="Users" asp-action="ManageUsers" class="btn btn-outline-primary">Cancel</button>
+            </div>
+        </div>
+    </div>
+</form>

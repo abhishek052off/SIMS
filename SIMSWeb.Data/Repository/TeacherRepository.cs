@@ -52,5 +52,14 @@ namespace SIMSWeb.Data.Repository
             _dbContext.Teachers.Update(teacher);
             await _dbContext.SaveChangesAsync();
         }
+
+        public async Task<Teacher> GetTeacherByUserId(int id)
+        {
+            var teacher = await _dbContext.Teachers
+                .Include(s => s.User)
+                .Where(u => u.UserId == id)
+                .FirstOrDefaultAsync() ?? throw new NotFoundException("Teacher not found");
+            return teacher;
+        }
     }
 }
