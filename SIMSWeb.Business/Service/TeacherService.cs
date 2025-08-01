@@ -36,5 +36,10 @@ namespace SIMSWeb.Business.Service
         {
             await _teacherRepository.UpdateTeacher(teacher);
         }
+
+        public async Task<Teacher> GetTeacherById(int id)
+        {
+            return await _teacherRepository.GetTeacherById(id);
+        }
     }
 }

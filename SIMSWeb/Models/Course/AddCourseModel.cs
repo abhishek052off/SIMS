@@ -3,7 +3,7 @@ using SIMSWeb.Models.Teacher;
 
 namespace SIMSWeb.Models.Course
 {
-    public class AddCourseModel
+    public class CourseViewModel
     {
         public string Name { get; set; }
         public bool IsActive { get; set; }
@@ -14,7 +14,7 @@ namespace SIMSWeb.Models.Course
 
     public class AddCourseVM
     {
-        public AddCourseModel CourseModel { get; set; }
+        public CourseViewModel CourseModel { get; set; }
         public List<TeacherSelect> TeacherListModel { get; set; }
     }
 }

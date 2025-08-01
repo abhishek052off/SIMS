@@ -13,7 +13,7 @@ namespace SIMSWeb.Business.IService
         Task<List<Course>> GetCourses(string courseSearchText, int skip, int pageSize);
         Task AddCourse(Course course);
         Task UpdateCourse(UpdateCourseDTO course);
-        Task DeleteCourse(Course course);
+        Task DeleteCourse(int id);
         Task<Course> GetCourseById(int id);
         Task<int> GetCourseCount(string searchText);
     }

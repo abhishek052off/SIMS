@@ -57,22 +57,35 @@ namespace SIMSWeb.Controllers
             return View(manageCourseVM);
         }
 
-
-        public async Task<ActionResult> AddCourses()
+        public async Task<List<TeacherSelect>> GetTeacherList()
         {
-            var courseVM = new AddCourseVM();
             var teachers = await _teacherService.GetTeachers();
-            courseVM.TeacherListModel = teachers.Select(u => new TeacherSelect
+            var teacherList = teachers.Select(u => new TeacherSelect
             {
                 Id = u.Id,
                 Name = u.User.Name,
             }).ToList();
 
+            teacherList.Insert(0, new TeacherSelect
+            {
+                Id = -1,
+                Name = "Select Teacher"
+            });
+
+            return teacherList;
+        }
+
+        public async Task<ActionResult> AddCourses()
+        {
+            var courseVM = new AddCourseVM();
+
+            courseVM.TeacherListModel = await GetTeacherList();
+
             return View(courseVM);
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddCourses(AddCourseModel courseRequest)
+        public async Task<ActionResult> AddCourses(CourseViewModel courseRequest)
         {
             if (!ModelState.IsValid)
             {
@@ -88,36 +101,75 @@ namespace SIMSWeb.Controllers
 
             await _courseService.AddCourse(course);
             return RedirectToAction("ManageCourses");
-           
+
         }
 
-        public async Task<ActionResult<UpdateUserDTO>> EditUser(int id)
+        public async Task<ActionResult> EditCourse(int id)
         {
+            var courseVM = new UpdateCourseVM();
+            var teacherList = await GetTeacherList();
+
             var course = await _courseService.GetCourseById(id);
             if (course == null)
             {
                 return RedirectToAction("ManageCourses");
             }
 
-            var _course = new UpdateCourseDTO
+            courseVM.Course = new UpdateCourseDTO
             {
                 Id = course.Id,
                 Name = course.Name,
                 IsActive = course.IsActive,
+                TeacherId = course.TeacherId,
             };
-            return View(_course);
+
+            courseVM.TeachersList = teacherList;
+            return View(courseVM);
         }
 
         [HttpPost]
-        public async Task<ActionResult> EditUser(UpdateCourseDTO courseRequest)
+        public async Task<ActionResult> EditCourse(UpdateCourseDTO courseRequest)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                await _courseService.UpdateCourse(courseRequest);
-                TempData["success"] = "Course successfully";
-                return RedirectToAction("ManageUsers");
+                return RedirectToAction("EditCourse", "Course", new { Id = courseRequest.Id });
             }
-            return View();
+            await _courseService.UpdateCourse(courseRequest);
+            TempData["success"] = "Course updated successfully";
+            return RedirectToAction("ManageCourses");
+        }
+
+        public async Task<ActionResult> DeleteCourse(int id)
+        {
+            var course = await _courseService.GetCourseById(id);
+
+            var teacher = await _teacherService.GetTeacherById(id);
+
+            var viewModel = new DeleteCourseModel
+            {
+                Name = course.Name,
+                IsActive = course.IsActive,
+                TeacherId = course.TeacherId,
+                TeacherName = teacher.User.Name,
+            };
+
+            return View(viewModel);
+        }
+
+        [HttpPost, ActionName("DeleteCourse")]
+        public async Task<ActionResult> DeleteCoursePOST(int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View();
+            }
+
+            await _courseService.DeleteCourse(id);
+            TempData["success"] = "Course deleted successfully";
+            return RedirectToAction("ManageCourses");
+
+
+
         }
 
     }

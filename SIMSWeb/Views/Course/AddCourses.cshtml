@@ -14,28 +14,29 @@
         </div>
         <div asp-validation-summary="ModelOnly"></div>
         <div class="mb-3">
-            <label>Name</label>
+            <label>Course Name</label>
             <input asp-for="@Model.CourseModel.Name" name="Name" type="text" class="form-control" />
             <span asp-validation-for="@Model.CourseModel.Name" class="text-danger" />
+        </div>        
+        <div class="mb-3">
+            <label>Teacher</label>
+            <select asp-for="@Model.CourseModel.TeacherId" asp-items="@(new SelectList(Model.TeacherListModel, "Id", "Name"))" name="TeacherId" class="form-control">
+                <option value="">Select Teacher</option>
+            </select>
+            <span asp-validation-for="@Model.CourseModel.TeacherId" class="text-danger" />
         </div>
         <div class="row mb-3">
             <div class="col-1">
                 <label class="form-label">Active</label>
             </div>
             <div class="col-1">
-                <input asp-for="@Model.CourseModel.IsActive" name="IsActive"  type="checkbox" checked class="form-check" />
+                <input asp-for="@Model.CourseModel.IsActive" name="IsActive" type="checkbox" checked class="form-check" />
             </div>
-        </div>
-        <div class="mb-3">
-            <label>Teachers</label>
-            <select asp-items="@(new SelectList(Model.TeacherListModel, "Id","Name"))" name="TeacherId" class="form-control">
-                <option value="select">Select Teachers</option>
-            </select>
         </div>
         <div class="row">
             <div class="col-6">
                 <button type="submit" class="btn btn-primary">Add</button>
-                <button asp-controller="Users" asp-action="ManageCourses" class="btn btn-outline-primary">Cancel</button>
+                <a asp-controller="Course" asp-action="ManageCourses" type="button" class="btn btn-outline-primary">Cancel</a>
             </div>
         </div>
     </div>

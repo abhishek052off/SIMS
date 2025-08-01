@@ -13,5 +13,6 @@ namespace SIMSWeb.Business.IService
         Task AddTeacher(Teacher teacher);
         Task UpdateTeacher(Teacher teacher);
         Task DeleteTeacher(Teacher teacher);
+        Task<Teacher> GetTeacherById(int id);
     }
 }

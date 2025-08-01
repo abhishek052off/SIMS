@@ -1,0 +1,50 @@
+﻿@using SIMSWeb.Business.ServiceDTO.Course
+@{
+    ViewData["Title"] = "Edit Course";
+}
+
+@model UpdateCourseVM;
+
+<form method="post" asp-action="EditCourse" asp-controller="Course">
+    <input asp-for="@Model.Course.Id" name="Id" hidden />
+    <div class="p-3 pt-4 gap-2">
+        <div class="row">
+            <h2>Edit Course</h2>
+            <hr />
+        </div>
+        <div asp-validation-summary="ModelOnly"></div>
+        <div class="mb-3">
+            <label>Course Name</label>
+            <input asp-for="@Model.Course.Name" name="Name" type="text" class="form-control" />
+            <span asp-validation-for="@Model.Course.Name" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label>Teacher</label>
+            <select asp-for="@Model.Course.TeacherId" asp-items="@(new SelectList(Model.TeachersList, "Id", "Name"))" name="TeacherId" class="form-control">
+                <option value="select">Select Teacher</option>
+            </select>
+        </div>
+        <div class="row mb-3">
+            <div class="col-1">
+                <label class="form-label">Active</label>
+            </div>
+            <div class="col-1">
+                <input asp-for="@Model.Course.IsActive" name="IsActive" type="checkbox" checked class="form-check" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <button type="submit" class="btn btn-primary" asp-action="EditCourse" asp-controller="Course">Update</button>
+                <button asp-controller="Course" asp-action="ManageCourses" class="btn btn-outline-primary">Cancel</button>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+@section Scripts
+{
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}

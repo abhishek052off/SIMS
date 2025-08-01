@@ -5,6 +5,10 @@
 
 @model ManageCourseVM
 
+@{
+    int rowIndex = (Model.Paginations.CurrentPage - 1) * Model.Paginations.PageSize;
+}
+
 <div class="container">
     <div class="row pt-4 pb-3 align-items-center">
         <div class="col-6">
@@ -42,7 +46,7 @@
             @foreach (var item in Model.Courses.Select((value, index) => (value, index)))
             {
                 <tr>
-                    <td class="col-2">@(item.index + 1)</td>
+                    <td class="col-2">@(item.index + rowIndex + 1)</td>
                     <td class="col-3">@item.value.Name</td>
                     <td class="col-2">
                         @if(item.value.IsActive)
@@ -56,12 +60,12 @@
                     </td>
                     <td>
                         <span>
-                            <a asp-action="EditCourse" asp-controller="Courses" asp-route-id="@item.value.Id" class="btn btn-sm btn-info">
+                            <a asp-action="EditCourse" asp-controller="Course" asp-route-id="@item.value.Id" class="btn btn-sm btn-info">
                                 <i class="bi bi-pencil"></i> Edit
                             </a>
                         </span>
                         <span>
-                            <a asp-action="DeleteCourse" asp-controller="Courses" asp-route-id="@item.value.Id" class="btn btn-sm btn-danger">
+                            <a asp-action="DeleteCourse" asp-controller="Course" asp-route-id="@item.value.Id" class="btn btn-sm btn-danger">
                                 <i class="bi bi-trash"></i> Delete
                             </a>
                         </span>

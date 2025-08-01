@@ -25,8 +25,9 @@ namespace SIMSWeb.Business.Service
             await _courseRepository.AddCourse(course);
         }
 
-        public async Task DeleteCourse(Course course)
+        public async Task DeleteCourse(int id)
         {
+            var course = await GetCourseById(id);
             await _courseRepository.DeleteCourse(course);
         }
 

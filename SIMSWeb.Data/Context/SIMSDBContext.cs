@@ -58,7 +58,7 @@ namespace SIMSWeb.Data.Context
                 .HasOne(s => s.Course)
                 .WithMany(e => e.Enrollments)
                 .HasForeignKey(e => e.CourseId)
-                .OnDelete(DeleteBehavior.NoAction); 
+                .OnDelete(DeleteBehavior.Cascade); ;
 
 
             modelBuilder.Entity<User>()
