@@ -42,7 +42,7 @@ namespace SIMSWeb.Data.Context
              .HasMany(t => t.Courses)
              .WithOne(c => c.Teacher)
              .HasForeignKey(t => t.TeacherId)
-             .OnDelete(DeleteBehavior.NoAction); ;
+             .OnDelete(DeleteBehavior.NoAction); 
 
             // Many to many, Student & Course
             modelBuilder.Entity<Enrollment>()

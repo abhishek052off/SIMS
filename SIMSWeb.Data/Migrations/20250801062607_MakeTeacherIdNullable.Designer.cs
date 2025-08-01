@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SIMSWeb.Data.Context;
 
@@ -11,9 +12,10 @@ using SIMSWeb.Data.Context;
 namespace SIMSWeb.Data.Migrations
 {
     [DbContext(typeof(SIMSDBContext))]
-    partial class SIMSDBContextModelSnapshot : ModelSnapshot
+    [Migration("20250801062607_MakeTeacherIdNullable")]
+    partial class MakeTeacherIdNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -38,6 +40,7 @@ namespace SIMSWeb.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("TeacherId")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -139,13 +142,13 @@ namespace SIMSWeb.Data.Migrations
                         new
                         {
                             Id = 1,
-                            EnrollmentDate = new DateTime(2025, 8, 1, 12, 3, 44, 380, DateTimeKind.Local).AddTicks(1657),
+                            EnrollmentDate = new DateTime(2025, 8, 1, 11, 56, 6, 696, DateTimeKind.Local).AddTicks(7020),
                             UserId = 2
                         },
                         new
                         {
                             Id = 2,
-                            EnrollmentDate = new DateTime(2025, 8, 1, 12, 3, 44, 380, DateTimeKind.Local).AddTicks(1658),
+                            EnrollmentDate = new DateTime(2025, 8, 1, 11, 56, 6, 696, DateTimeKind.Local).AddTicks(7021),
                             UserId = 3
                         });
                 });
@@ -179,14 +182,14 @@ namespace SIMSWeb.Data.Migrations
                         {
                             Id = 1,
                             Department = "Mathematics",
-                            HireDate = new DateTime(2025, 8, 1, 12, 3, 44, 380, DateTimeKind.Local).AddTicks(1669),
+                            HireDate = new DateTime(2025, 8, 1, 11, 56, 6, 696, DateTimeKind.Local).AddTicks(7031),
                             UserId = 3
                         },
                         new
                         {
                             Id = 2,
                             Department = "Physics",
-                            HireDate = new DateTime(2025, 8, 1, 12, 3, 44, 380, DateTimeKind.Local).AddTicks(1670),
+                            HireDate = new DateTime(2025, 8, 1, 11, 56, 6, 696, DateTimeKind.Local).AddTicks(7032),
                             UserId = 4
                         });
                 });
@@ -226,7 +229,7 @@ namespace SIMSWeb.Data.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2025, 8, 1, 12, 3, 44, 380, DateTimeKind.Local).AddTicks(1546),
+                            CreatedAt = new DateTime(2025, 8, 1, 11, 56, 6, 696, DateTimeKind.Local).AddTicks(6924),
                             Email = "admin@gmail.com",
                             Name = "Admin",
                             Password = "admin",
@@ -235,7 +238,7 @@ namespace SIMSWeb.Data.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2025, 8, 1, 12, 3, 44, 380, DateTimeKind.Local).AddTicks(1558),
+                            CreatedAt = new DateTime(2025, 8, 1, 11, 56, 6, 696, DateTimeKind.Local).AddTicks(6934),
                             Email = "keya@gmail.com",
                             Name = "Keya",
                             Password = "stud",
@@ -244,7 +247,7 @@ namespace SIMSWeb.Data.Migrations
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2025, 8, 1, 12, 3, 44, 380, DateTimeKind.Local).AddTicks(1568),
+                            CreatedAt = new DateTime(2025, 8, 1, 11, 56, 6, 696, DateTimeKind.Local).AddTicks(6934),
                             Email = "tiya@gmail.com",
                             Name = "Tiya",
                             Password = "staff",
@@ -253,7 +256,7 @@ namespace SIMSWeb.Data.Migrations
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateTime(2025, 8, 1, 12, 3, 44, 380, DateTimeKind.Local).AddTicks(1568),
+                            CreatedAt = new DateTime(2025, 8, 1, 11, 56, 6, 696, DateTimeKind.Local).AddTicks(6935),
                             Email = "nav@gmail.com",
                             Name = "Naveen",
                             Password = "staff",
@@ -262,7 +265,7 @@ namespace SIMSWeb.Data.Migrations
                         new
                         {
                             Id = 5,
-                            CreatedAt = new DateTime(2025, 8, 1, 12, 3, 44, 380, DateTimeKind.Local).AddTicks(1569),
+                            CreatedAt = new DateTime(2025, 8, 1, 11, 56, 6, 696, DateTimeKind.Local).AddTicks(6936),
                             Email = "sid@gmail.com",
                             Name = "Sid",
                             Password = "stud",
@@ -275,7 +278,8 @@ namespace SIMSWeb.Data.Migrations
                     b.HasOne("SIMSWeb.Model.Models.Teacher", "Teacher")
                         .WithMany("Courses")
                         .HasForeignKey("TeacherId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
                     b.Navigation("Teacher");
                 });

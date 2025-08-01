@@ -26,7 +26,7 @@ namespace SIMSWeb.Controllers
             return View();
         }
 
-        public async Task<ActionResult> ManageUsers(string UserRole, string SearchText, int Page = 1, int PageSize = 2)
+        public async Task<ActionResult> ManageUsers(string UserRole, string SearchText, int Page = 1, int PageSize = 10)
         {
             var manageUsersVM = new ManageUserVM();
 
@@ -74,8 +74,6 @@ namespace SIMSWeb.Controllers
             };
             return View(manageUsersVM);
         }
-
-
 
         public IActionResult AddUsers()
         {

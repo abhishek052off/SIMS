@@ -1,4 +1,5 @@
-﻿using SIMSWeb.Model.Models;
+﻿using SIMSWeb.Business.ServiceDTO.Course;
+using SIMSWeb.Model.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace SIMSWeb.Business.IService
     {
         Task<List<Course>> GetCourses(string courseSearchText, int skip, int pageSize);
         Task AddCourse(Course course);
-        Task UpdateCourse(Course course);
+        Task UpdateCourse(UpdateCourseDTO course);
         Task DeleteCourse(Course course);
         Task<Course> GetCourseById(int id);
         Task<int> GetCourseCount(string searchText);

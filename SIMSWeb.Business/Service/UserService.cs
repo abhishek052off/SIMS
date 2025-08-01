@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SIMSWeb.Business.ServiceDTO.User;
+using SIMSWeb.ConstantsAndUtilities.AuthUtilities;
 
 namespace SIMSWeb.Business.Service
 {
@@ -27,6 +28,8 @@ namespace SIMSWeb.Business.Service
 
         public async Task AddUser(User user)
         {
+            user.Password = PasswordUtility.HashPassword(user.Password);
+
             await _userRepository.AddUser(user);
             if (user.Role == UsersConstants.STUDENT_ROLE)
             {
@@ -53,7 +56,9 @@ namespace SIMSWeb.Business.Service
         public async Task<User> AuthenticateUser(string email, string password)
         {
             User user = await _userRepository.GetUserByEmail(email) ?? throw new NotFoundException("User not found with this email");
-            if (user.Password != password)
+            var isHashMatch = PasswordUtility.VerifyPassword(password, user.Password);
+
+            if (!isHashMatch)
             {
                 throw new CustomException("Password is incorrect");
 
@@ -91,9 +96,10 @@ namespace SIMSWeb.Business.Service
                 user.Email = userRequest.Email;
             }
 
-            if (user.Password != userRequest.Password)
+            var isPasswordSame = PasswordUtility.VerifyPassword(userRequest.Password, user.Password);
+            if (!isPasswordSame)
             {
-                user.Password = userRequest.Password;
+                user.Password = PasswordUtility.HashPassword(userRequest.Password);
             }
 
             if (user.Role != userRequest.Role)

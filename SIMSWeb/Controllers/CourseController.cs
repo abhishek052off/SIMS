@@ -3,10 +3,13 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SIMSWeb.Business.IService;
 using SIMSWeb.Business.Service;
+using SIMSWeb.Business.ServiceDTO.Course;
+using SIMSWeb.Business.ServiceDTO.User;
 using SIMSWeb.ConstantsAndUtilities;
 using SIMSWeb.Model.Models;
 using SIMSWeb.Models;
 using SIMSWeb.Models.Course;
+using SIMSWeb.Models.Teacher;
 using SIMSWeb.Models.User;
 using System.Drawing.Printing;
 
@@ -15,9 +18,11 @@ namespace SIMSWeb.Controllers
     public class CourseController : Controller
     {
         private readonly ICourseService _courseService;
-        public CourseController(ICourseService courseService)
+        private readonly ITeacherService _teacherService;
+        public CourseController(ICourseService courseService, ITeacherService teacherService)
         {
             _courseService = courseService;
+            _teacherService = teacherService;
         }
         public IActionResult Index()
         {
@@ -53,26 +58,67 @@ namespace SIMSWeb.Controllers
         }
 
 
-        public IActionResult AddCourses()
+        public async Task<ActionResult> AddCourses()
         {
-            return View();
+            var courseVM = new AddCourseVM();
+            var teachers = await _teacherService.GetTeachers();
+            courseVM.TeacherListModel = teachers.Select(u => new TeacherSelect
+            {
+                Id = u.Id,
+                Name = u.User.Name,
+            }).ToList();
+
+            return View(courseVM);
         }
 
         [HttpPost]
         public async Task<ActionResult> AddCourses(AddCourseModel courseRequest)
         {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction(nameof(AddCourses));
+            }
+
+            var course = new Course // Entity leaking to Presentation layer, should be mapped to DTO
+            {
+                Name = courseRequest.Name,
+                IsActive = courseRequest.IsActive,
+                TeacherId = courseRequest.TeacherId
+            };
+
+            await _courseService.AddCourse(course);
+            return RedirectToAction("ManageCourses");
+           
+        }
+
+        public async Task<ActionResult<UpdateUserDTO>> EditUser(int id)
+        {
+            var course = await _courseService.GetCourseById(id);
+            if (course == null)
+            {
+                return RedirectToAction("ManageCourses");
+            }
+
+            var _course = new UpdateCourseDTO
+            {
+                Id = course.Id,
+                Name = course.Name,
+                IsActive = course.IsActive,
+            };
+            return View(_course);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> EditUser(UpdateCourseDTO courseRequest)
+        {
             if (ModelState.IsValid)
             {
-                var course = new Course
-                {
-                    Name = courseRequest.Name,
-                    IsActive= courseRequest.IsActive,
-                };
-
-                await _courseService.AddCourse(course);
-                return RedirectToAction("ManageCourses");
+                await _courseService.UpdateCourse(courseRequest);
+                TempData["success"] = "Course successfully";
+                return RedirectToAction("ManageUsers");
             }
             return View();
         }
+
     }
 }

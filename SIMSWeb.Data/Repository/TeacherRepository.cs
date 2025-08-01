@@ -43,7 +43,9 @@ namespace SIMSWeb.Data.Repository
 
         public async Task<List<Teacher>> GetTeachers()
         {
-            var teachers = await _dbContext.Teachers.ToListAsync();
+            var teachers = await _dbContext.Teachers
+                .Include(t => t.User)
+                .ToListAsync();
             return teachers;
         }
 

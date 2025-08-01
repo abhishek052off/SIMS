@@ -1,4 +1,5 @@
 ﻿using SIMSWeb.Business.IService;
+using SIMSWeb.Business.ServiceDTO.Course;
 using SIMSWeb.Data.IRepository;
 using SIMSWeb.Data.Repository;
 using SIMSWeb.Model.Models;
@@ -39,9 +40,16 @@ namespace SIMSWeb.Business.Service
             return await _courseRepository.GetCourses(courseSearchText, skip, pageSize);
         }
 
-        public async Task UpdateCourse(Course course)
+        public async Task UpdateCourse(UpdateCourseDTO course)
         {
-            await _courseRepository.UpdateCourse(course);
+            var _course = new Course
+            {
+                Id = course.Id,
+                Name = course.Name,
+                IsActive = course.IsActive,
+            };
+
+            await _courseRepository.UpdateCourse(_course);
         }
 
         public async Task<int> GetCourseCount(string searchText)
