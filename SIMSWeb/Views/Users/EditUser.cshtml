@@ -1,7 +1,7 @@
-﻿@using SIMSWeb.Business.ServiceDTO.User
-@using SIMSWeb.ConstantsAndUtilities
+﻿@using SIMSWeb.ConstantsAndUtilities
+@using SIMSWeb.Model.ViewModels
 
-@model UpdateUserDTO;
+@model UserViewModel;
 
 <form method="post" asp-action="EditUser" asp-controller="Users">
     <input asp-for="Id" hidden />

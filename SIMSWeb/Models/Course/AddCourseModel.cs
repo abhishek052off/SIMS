@@ -1,16 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using SIMSWeb.Models.Teacher;
+using SIMSWeb.Business.ServiceDTO.Teacher;
+using SIMSWeb.Model.ViewModels;
 
 namespace SIMSWeb.Models.Course
 {
-    public class CourseViewModel
-    {
-        public string Name { get; set; }
-        public bool IsActive { get; set; }
-
-        public int? TeacherId { get; set; }
-    }
-
 
     public class AddCourseVM
     {

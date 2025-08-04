@@ -1,5 +1,5 @@
-﻿using SIMSWeb.Business.ServiceDTO.User;
-using SIMSWeb.Model.Models;
+﻿using SIMSWeb.Model.Models;
+using SIMSWeb.Model.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +12,7 @@ namespace SIMSWeb.Business.IService
     {
         Task<List<User>> GetUsers(string userRole, string searchText, int skip, int pageSize);
         Task AddUser(User user);
-        Task UpdateUser(UpdateUserDTO user);
+        Task UpdateUser(UserViewModel user);
         Task DeleteUser(int id);
         Task<User> AuthenticateUser(string email, string password);
         Task<User> GetUserById(int id);

@@ -1,12 +1,13 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SIMSWeb.Business.IService;
-using SIMSWeb.Business.ServiceDTO.User;
 using SIMSWeb.ConstantsAndUtilities;
 using SIMSWeb.Model.Models;
+using SIMSWeb.Model.ViewModels;
 using SIMSWeb.Models;
 using SIMSWeb.Models.User;
 using System.Drawing.Printing;
@@ -17,15 +18,20 @@ namespace SIMSWeb.Controllers
     public class UsersController : Controller
     {
         private readonly IUserService _userService;
-        public UsersController(IUserService userService)
+        private readonly IMapper _mapper;
+
+        public UsersController(IUserService userService, IMapper mapper)
         {
             _userService = userService;
+            _mapper = mapper;
         }
+
         public IActionResult Index()
         {
             return View();
         }
 
+        [Authorize(Policy = "AdminOnly")]
         public async Task<ActionResult> ManageUsers(string UserRole, string SearchText, int Page = 1, int PageSize = 10)
         {
             var manageUsersVM = new ManageUserVM();
@@ -100,7 +106,7 @@ namespace SIMSWeb.Controllers
             return View();
         }
 
-        public async Task<ActionResult<UpdateUserDTO>> EditUser(int id)
+        public async Task<ActionResult<UserViewModel>> EditUser(int id)
         {
             var user = await _userService.GetUserById(id);
             if (user == null)
@@ -108,19 +114,12 @@ namespace SIMSWeb.Controllers
                 return RedirectToAction("ManageUsers");
             }
 
-            var _user = new UpdateUserDTO
-            {
-                Id = user.Id,
-                Email = user.Email,
-                Password = user.Password,
-                Role = user.Role,
-                Name = user.Name,
-            };
+            var _user = _mapper.Map<User>(user);
             return View(_user);
         }
 
         [HttpPost]
-        public async Task<ActionResult> EditUser(UpdateUserDTO userRequest)
+        public async Task<ActionResult> EditUser(UserViewModel userRequest)
         {
             if (ModelState.IsValid)
             {

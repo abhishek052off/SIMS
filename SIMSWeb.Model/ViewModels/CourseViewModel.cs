@@ -4,17 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SIMSWeb.Model.Models
+namespace SIMSWeb.Model.ViewModels
 {
-    public class Course
+    public class CourseViewModel
     {
         public int Id { get; set; }
         public string Name { get; set; }
         public bool IsActive { get; set; }
-
-        public List<Enrollment>? Enrollments { get; set; }
-
         public int? TeacherId { get; set; }
-        public Teacher? Teacher { get; set; }
     }
 }

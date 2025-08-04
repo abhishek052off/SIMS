@@ -1,4 +1,4 @@
-﻿using SIMSWeb.Models.User;
+﻿using SIMSWeb.Model.Models;
 
 namespace SIMSWeb.Models.Course
 {
@@ -7,6 +7,8 @@ namespace SIMSWeb.Models.Course
         public int Id { get; set; }
         public string Name { get; set; }
         public bool IsActive { get; set; }
+
+        public Teacher Teacher { get; set; }
     }
 
     public class ManageCourseVM

@@ -8,6 +8,7 @@ using SIMSWeb.Data.Context;
 using SIMSWeb.Data.IRepository;
 using SIMSWeb.Data.Repository;
 using SIMSWeb.Model.Models;
+using SIMSWeb.Model.Profiles;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -70,6 +71,8 @@ builder.Services.AddScoped<ITeacherService, TeacherService>();
 
 builder.Services.AddScoped<ICourseRepository, CourseRepository>();
 builder.Services.AddScoped<ICourseService, CourseService>();
+
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 var app = builder.Build();
 

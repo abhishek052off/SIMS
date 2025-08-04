@@ -21,7 +21,6 @@
         <div class="mb-3">
             <label>Teacher</label>
             <select asp-for="@Model.Course.TeacherId" asp-items="@(new SelectList(Model.TeachersList, "Id", "Name"))" name="TeacherId" class="form-control">
-                <option value="select">Select Teacher</option>
             </select>
         </div>
         <div class="row mb-3">

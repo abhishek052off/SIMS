@@ -15,5 +15,6 @@ namespace SIMSWeb.Data.IRepository
         Task DeleteCourse(Course course);
         Task<Course> GetCourseById(int id);
         Task<int> GetCourseCount(string searchText);
+        Task<Course> GetCourseDetailsById(int id);
     }
 }

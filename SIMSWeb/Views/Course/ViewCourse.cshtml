@@ -1,0 +1,41 @@
+﻿@using SIMSWeb.Models.Course
+@{
+    ViewData["Title"] = "View Course";
+}
+
+@model DeleteCourseModel;
+
+<div class="container">
+    <input asp-for="@Model.Id" name="Id" hidden />
+    <div class="row col-12">
+        <div class="card mb-3">
+            <div class="card-header h5 fw-bold">Course Details</div>
+            <div class="card-body">
+                <div class="row g-3 align-items-center">
+                    <div class="col-auto">
+                        <label class="col-form-label card-body fw-bold">Course Name:</label>
+                    </div>
+                    <div class="col-auto">
+                        @Model.Name
+                    </div>
+                </div>
+                <div class="row g-3 align-items-center">
+                    <div class="col-auto">
+                        <label class="col-form-label card-body fw-bold">Teacher name:</label>
+                    </div>
+                    <div class="col-auto">
+                        @(!string.IsNullOrEmpty(Model?.TeacherName) ? Model.TeacherName : "")
+                    </div>
+                </div>
+                <div class="row g-3 align-items-center">
+                    <div class="col-auto">
+                        <label class="col-form-label card-body fw-bold">Status:</label>
+                    </div>
+                    <div class="col-auto">
+                        @(Model.IsActive ? "Active" : "Not Active")
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,15 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SIMSWeb.Business.IService;
 using SIMSWeb.Business.Service;
 using SIMSWeb.Business.ServiceDTO.Course;
-using SIMSWeb.Business.ServiceDTO.User;
-using SIMSWeb.ConstantsAndUtilities;
-using SIMSWeb.Model.Models;
+using SIMSWeb.Business.ServiceDTO.Teacher;
+using SIMSWeb.Model.ViewModels;
 using SIMSWeb.Models;
 using SIMSWeb.Models.Course;
-using SIMSWeb.Models.Teacher;
 using SIMSWeb.Models.User;
 using System.Drawing.Printing;
 
@@ -19,17 +19,20 @@ namespace SIMSWeb.Controllers
     {
         private readonly ICourseService _courseService;
         private readonly ITeacherService _teacherService;
-        public CourseController(ICourseService courseService, ITeacherService teacherService)
+        private readonly IMapper _mapper;
+        public CourseController(ICourseService courseService, ITeacherService teacherService, IMapper mapper)
         {
             _courseService = courseService;
             _teacherService = teacherService;
+            _mapper = mapper;
         }
         public IActionResult Index()
         {
             return View();
         }
 
-        public async Task<ActionResult> ManageCourses(string CourseSearchText, int Page = 1, int PageSize = 2)
+        [HttpGet("Courses")]
+        public async Task<ActionResult> ManageCourses(string CourseSearchText, int Page = 1, int PageSize = 5)
         {
             var manageCourseVM = new ManageCourseVM();
 
@@ -45,6 +48,7 @@ namespace SIMSWeb.Controllers
                 Id = c.Id,
                 Name = c.Name,
                 IsActive = c.IsActive,
+                Teacher = c.Teacher,
             }).ToList();
 
             manageCourseVM.Paginations = new PaginatedResult<ManageCourseModel>
@@ -75,6 +79,7 @@ namespace SIMSWeb.Controllers
             return teacherList;
         }
 
+        [Authorize(Policy = "AdminOnly")]
         public async Task<ActionResult> AddCourses()
         {
             var courseVM = new AddCourseVM();
@@ -85,6 +90,7 @@ namespace SIMSWeb.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<ActionResult> AddCourses(CourseViewModel courseRequest)
         {
             if (!ModelState.IsValid)
@@ -92,18 +98,14 @@ namespace SIMSWeb.Controllers
                 return RedirectToAction(nameof(AddCourses));
             }
 
-            var course = new Course // Entity leaking to Presentation layer, should be mapped to DTO
-            {
-                Name = courseRequest.Name,
-                IsActive = courseRequest.IsActive,
-                TeacherId = courseRequest.TeacherId
-            };
+            var course = _mapper.Map<CourseViewModel>(courseRequest);
 
             await _courseService.AddCourse(course);
             return RedirectToAction("ManageCourses");
 
         }
 
+        [Authorize(Policy = "AdminOnly")]
         public async Task<ActionResult> EditCourse(int id)
         {
             var courseVM = new UpdateCourseVM();
@@ -115,20 +117,15 @@ namespace SIMSWeb.Controllers
                 return RedirectToAction("ManageCourses");
             }
 
-            courseVM.Course = new UpdateCourseDTO
-            {
-                Id = course.Id,
-                Name = course.Name,
-                IsActive = course.IsActive,
-                TeacherId = course.TeacherId,
-            };
+            courseVM.Course = _mapper.Map<CourseViewModel>(course);
 
             courseVM.TeachersList = teacherList;
             return View(courseVM);
         }
 
         [HttpPost]
-        public async Task<ActionResult> EditCourse(UpdateCourseDTO courseRequest)
+        [Authorize(Policy = "AdminOnly")]
+        public async Task<ActionResult> EditCourse(CourseViewModel courseRequest)
         {
             if (!ModelState.IsValid)
             {
@@ -139,6 +136,7 @@ namespace SIMSWeb.Controllers
             return RedirectToAction("ManageCourses");
         }
 
+        [Authorize(Policy = "AdminOnly")]
         public async Task<ActionResult> DeleteCourse(int id)
         {
             var course = await _courseService.GetCourseById(id);
@@ -157,6 +155,7 @@ namespace SIMSWeb.Controllers
         }
 
         [HttpPost, ActionName("DeleteCourse")]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<ActionResult> DeleteCoursePOST(int id)
         {
             if (!ModelState.IsValid)
@@ -167,9 +166,23 @@ namespace SIMSWeb.Controllers
             await _courseService.DeleteCourse(id);
             TempData["success"] = "Course deleted successfully";
             return RedirectToAction("ManageCourses");
+        }
 
+        public async Task<ActionResult> ViewCourse(int id)
+        {
+            var course = await _courseService.GetCourseById(id);
 
+            var teacher = await _teacherService.GetTeacherById(id);
 
+            var viewModel = new DeleteCourseModel
+            {
+                Name = course.Name,
+                IsActive = course.IsActive,
+                TeacherId = course.TeacherId,
+                TeacherName = teacher.User.Name,
+            };
+
+            return View(viewModel);
         }
 
     }

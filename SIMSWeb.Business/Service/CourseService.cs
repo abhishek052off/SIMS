@@ -1,8 +1,10 @@
-﻿using SIMSWeb.Business.IService;
+﻿using AutoMapper;
+using SIMSWeb.Business.IService;
 using SIMSWeb.Business.ServiceDTO.Course;
 using SIMSWeb.Data.IRepository;
 using SIMSWeb.Data.Repository;
 using SIMSWeb.Model.Models;
+using SIMSWeb.Model.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,15 +16,18 @@ namespace SIMSWeb.Business.Service
     public class CourseService : ICourseService
     {
         private readonly ICourseRepository _courseRepository;
+        private readonly IMapper _mapper;
 
-        public CourseService(ICourseRepository courseRepository)
+        public CourseService(ICourseRepository courseRepository, IMapper mapper)
         {
             _courseRepository = courseRepository;
+            _mapper = mapper;
         }
 
-        public async Task AddCourse(Course course)
+        public async Task AddCourse(CourseViewModel course)
         {
-            await _courseRepository.AddCourse(course);
+            var courseModel = _mapper.Map<Course>(course);
+            await _courseRepository.AddCourse(courseModel);
         }
 
         public async Task DeleteCourse(int id)
@@ -36,19 +41,19 @@ namespace SIMSWeb.Business.Service
             return await _courseRepository.GetCourseById(id);
         }
 
+        public async Task<Course> GetCourseDetailsById(int id)
+        {
+            return await _courseRepository.GetCourseDetailsById(id);
+        }
+
         public async Task<List<Course>> GetCourses(string courseSearchText, int skip, int pageSize)
         {
             return await _courseRepository.GetCourses(courseSearchText, skip, pageSize);
         }
 
-        public async Task UpdateCourse(UpdateCourseDTO course)
+        public async Task UpdateCourse(CourseViewModel course)
         {
-            var _course = new Course
-            {
-                Id = course.Id,
-                Name = course.Name,
-                IsActive = course.IsActive,
-            };
+            var _course = _mapper.Map<Course>(course);
 
             await _courseRepository.UpdateCourse(_course);
         }

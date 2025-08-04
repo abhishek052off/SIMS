@@ -50,8 +50,12 @@ namespace SIMSWeb.Data.Repository
 
             }
 
-            courses = courses.Skip(skip).Take(pageSize);
-            return await courses.ToListAsync();
+            courses = courses.Include(c => c.Teacher)
+                .ThenInclude(t => t.User)
+                .Skip(skip).Take(pageSize);
+
+            var courseList = await courses.ToListAsync();
+            return courseList;
         }
 
         public async Task UpdateCourse(Course course)
@@ -71,6 +75,14 @@ namespace SIMSWeb.Data.Repository
             }
 
             return await courses.CountAsync();
+        }
+
+        public async Task<Course> GetCourseDetailsById(int id)
+        {
+            var course = await _context.Courses
+                 .Where(c => c.Id == id)
+                 .FirstOrDefaultAsync() ?? throw new NotFoundException("Course not found");
+            return course;
         }
     }
 }

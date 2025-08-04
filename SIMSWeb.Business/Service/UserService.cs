@@ -9,8 +9,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SIMSWeb.Business.ServiceDTO.User;
 using SIMSWeb.ConstantsAndUtilities.AuthUtilities;
+using SIMSWeb.Model.ViewModels;
 
 namespace SIMSWeb.Business.Service
 {
@@ -78,7 +78,7 @@ namespace SIMSWeb.Business.Service
             return users;
         }
 
-        public async Task UpdateUser(UpdateUserDTO userRequest)
+        public async Task UpdateUser(UserViewModel userRequest)
         {
             var user = await _userRepository.GetUserById(userRequest.Id);
             if (user == null)
