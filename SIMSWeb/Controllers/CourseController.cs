@@ -170,16 +170,25 @@ namespace SIMSWeb.Controllers
 
         public async Task<ActionResult> ViewCourse(int id)
         {
-            var course = await _courseService.GetCourseById(id);
+            var course = await _courseService.GetCourseDetailsById(id);
 
-            var teacher = await _teacherService.GetTeacherById(id);
-
-            var viewModel = new DeleteCourseModel
+            var viewModel = new ViewCourseModel
             {
                 Name = course.Name,
                 IsActive = course.IsActive,
                 TeacherId = course.TeacherId,
-                TeacherName = teacher.User.Name,
+                TeacherName = course?.Teacher?.User?.Name ?? "",
+                Department = course?.Teacher?.Department ?? "",
+                TeacherHireDate = course?.Teacher?.HireDate,
+                Students = course.Enrollments.Select(e => new Student
+                {
+                    StudentName = e.Student?.User?.Name ?? "",
+                    EnrollmentDate = e.Student?.EnrollmentDate,
+                    Term = e.Term,
+                    Comments = e.Comments,
+                    Marks = e.Marks
+
+                }).ToList()
             };
 
             return View(viewModel);

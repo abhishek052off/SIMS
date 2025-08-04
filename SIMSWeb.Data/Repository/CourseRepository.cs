@@ -79,9 +79,15 @@ namespace SIMSWeb.Data.Repository
 
         public async Task<Course> GetCourseDetailsById(int id)
         {
-            var course = await _context.Courses
+            var course = await _context.Courses                
+                .Include(c => c.Teacher)
+                    .ThenInclude(t => t.User)
+                 .Include(c => c.Enrollments)
+                    .ThenInclude(e => e.Student)
+                    .ThenInclude(s => s.User)
                  .Where(c => c.Id == id)
-                 .FirstOrDefaultAsync() ?? throw new NotFoundException("Course not found");
+                 .FirstOrDefaultAsync();   
+            
             return course;
         }
     }
