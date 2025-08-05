@@ -2,7 +2,7 @@
 
 namespace SIMSWeb.Models.Course
 {
-    public class Student
+    public class StudentViewDTO
     {
         public string StudentName { get; set; }
         public DateTime? EnrollmentDate { get; set; }
@@ -23,7 +23,7 @@ namespace SIMSWeb.Models.Course
 
         public string? Department { get; set; }
 
-        public List<Student>? Students { get; set;}
+        public List<StudentViewDTO>? Students { get; set;}
 
 
     }

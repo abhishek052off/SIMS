@@ -114,7 +114,7 @@ namespace SIMSWeb.Controllers
                 return RedirectToAction("ManageUsers");
             }
 
-            var _user = _mapper.Map<User>(user);
+            var _user = _mapper.Map<UserViewModel>(user);
             return View(_user);
         }
 

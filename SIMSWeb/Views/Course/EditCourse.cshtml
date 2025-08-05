@@ -1,40 +1,78 @@
 ﻿@using SIMSWeb.Business.ServiceDTO.Course
-@{
-    ViewData["Title"] = "Edit Course";
-}
 
 @model UpdateCourseVM;
 
+@{
+    var title = Model.Course.ModifyTeacher ? "Modify Teacher" : "Edit Course";
+    ViewData["Title"] = title;
+}
+
 <form method="post" asp-action="EditCourse" asp-controller="Course">
     <input asp-for="@Model.Course.Id" name="Id" hidden />
+    <input asp-for="@Model.Course.ModifyTeacher" name="ModifyTeacher" hidden />
+
     <div class="p-3 pt-4 gap-2">
         <div class="row">
-            <h2>Edit Course</h2>
+            <h2>@title</h2>
             <hr />
         </div>
         <div asp-validation-summary="ModelOnly"></div>
         <div class="mb-3">
             <label>Course Name</label>
-            <input asp-for="@Model.Course.Name" name="Name" type="text" class="form-control" />
+            <input asp-for="@Model.Course.Name" name="Name" type="text" class="form-control" disabled="@Model.Course.ModifyTeacher" />
+            @if (Model.Course.ModifyTeacher)
+            {
+                <input type="hidden" asp-for="@Model.Course.Name" name="Name" />
+            }
             <span asp-validation-for="@Model.Course.Name" class="text-danger"></span>
         </div>
         <div class="mb-3">
             <label>Teacher</label>
-            <select asp-for="@Model.Course.TeacherId" asp-items="@(new SelectList(Model.TeachersList, "Id", "Name"))" name="TeacherId" class="form-control">
+            <select asp-for="@Model.Course.TeacherId" asp-items="@(new SelectList(Model.TeachersList, "Id", "Name"))"
+                    name="TeacherId" class="form-control">
             </select>
         </div>
+        @if (Model.Course.ModifyTeacher)
+        {
+            <div class="mb-3">
+                <label class="form-label">Department</label>
+                <input asp-for="@Model.Course.Department" name="Department" class="form-control" />
+
+            </div>
+        }
         <div class="row mb-3">
             <div class="col-1">
                 <label class="form-label">Active</label>
             </div>
             <div class="col-1">
-                <input asp-for="@Model.Course.IsActive" name="IsActive" type="checkbox" checked class="form-check" />
+                <input asp-for="@Model.Course.IsActive" name="IsActive" type="checkbox"
+                       checked disabled="@Model.Course.ModifyTeacher" class="form-check" />
+                @if (Model.Course.ModifyTeacher)
+                {
+                    <input type="hidden" asp-for="@Model.Course.IsActive" name="IsActive" />
+                }
             </div>
         </div>
         <div class="row">
             <div class="col-6">
-                <button type="submit" class="btn btn-primary" asp-action="EditCourse" asp-controller="Course">Update</button>
-                <button asp-controller="Course" asp-action="ManageCourses" class="btn btn-outline-primary">Cancel</button>
+                <button type="submit" class="btn btn-primary" asp-action="EditCourse"
+                        asp-controller="Course">
+                    Update
+                </button>
+                @if (Model.Course.ModifyTeacher)
+                {
+                    <a asp-controller="Course" asp-action="ViewCourse" asp-route-id="@Model.Course.Id"
+                       class="btn btn-outline-primary">
+                        Cancel
+                    </a>
+                }
+                else
+                {
+                    <a asp-controller="Course" asp-action="ManageCourses" class="btn btn-outline-primary">
+                        Cancel
+                    </a>
+                }
+                
             </div>
         </div>
     </div>

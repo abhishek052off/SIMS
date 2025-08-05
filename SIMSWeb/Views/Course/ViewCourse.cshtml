@@ -44,45 +44,76 @@
             </div>
         </div>
     </div>
-
+    <!--Faculty details-->
     <div class="row col-12">
         <div class="card mb-3">
-            <div class="card-header h5 fw-bold">Faculty Details</div>
+            <div class="card-header h5 fw-bold d-flex justify-content-between">
+                Faculty Details
+                @if (User.IsInRole("Admin") && Model.TeacherId > 0)
+                {
+                    <a class="btn btn-outline-primary" asp-controller="Course"
+                       asp-action="EditCourse" asp-route-id="@Model.Id" asp-route-modifyTeacher="true">
+                        Assign Teacher
+                    </a>
+                }
+            </div>
             <div class="card-body">
-                <div class="row g-3 align-items-center">
-                    <div class="col-auto">
-                        <label class="col-form-label control-label card-body fw-bold">Teacher Name:</label>
+                @if (Model.TeacherId > 0)
+                {
+                    <div class="row g-3 align-items-center">
+                        <div class="col-auto">
+                            <label class="col-form-label control-label card-body fw-bold">Teacher Name:</label>
+                        </div>
+                        <div class="col-auto">
+                            @Model.TeacherName
+                        </div>
                     </div>
-                    <div class="col-auto">
-                        @Model.TeacherName
+                    <div class="row g-3 align-items-center">
+                        <div class="col-auto">
+                            <label class="col-form-label control-label card-body fw-bold">Department</label>
+                        </div>
+                        <div class="col-auto">
+                            @Model.Department
+                        </div>
                     </div>
-                </div>
-                <div class="row g-3 align-items-center">
-                    <div class="col-auto">
-                        <label class="col-form-label control-label card-body fw-bold">Department</label>
+                    <div class="row g-3 align-items-center">
+                        <div class="col-auto">
+                            <label class="col-form-label control-label card-body fw-bold">Date Joined</label>
+                        </div>
+                        <div class="col-auto">
+                            @(Model?.TeacherHireDate?.ToString("dd MMM, yyyy") ?? "No date available")
+                        </div>
                     </div>
-                    <div class="col-auto">
-                        @Model.Department
+                }
+                else
+                {
+                    <div class="text-center align-content-center" style="height:100px">
+                        <h6 class="text-muted">No teacher assigned to this course.</h6>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <a class="btn btn-outline-primary" asp-controller="Course"
+                               asp-action="EditCourse" asp-route-id="@Model.Id" asp-route-modifyTeacher="true">
+                                Assign Teacher
+                            </a>
+                        }
                     </div>
-                </div>
-                <div class="row g-3 align-items-center">
-                    <div class="col-auto">
-                        <label class="col-form-label control-label card-body fw-bold">Date Joined</label>
-                    </div>
-                    <div class="col-auto">
-                        @(Model?.TeacherHireDate != null ? Model.TeacherHireDate : "")
-                    </div>
-                </div>
+                }
             </div>
         </div>
     </div>
-
-    @if (Model?.Students != null && Model.Students.Any())
-    {
-        <div class="row col-12">
-            <div class="card mb-3">
-                <div class="card-header h5 fw-bold">Student Details</div>
-                <div class="card-body">
+    <!--Student details-->
+    <div class="row col-12">
+        <div class="card mb-3">
+            <div class="card-header h5 fw-bold d-flex justify-content-between">
+                Student Details
+                @if (!User.IsInRole("Student") && Model?.Students != null && Model.Students.Any())
+                {
+                    <a class="btn btn-outline-primary">Enroll Students</a>
+                }
+            </div>
+            <div class="card-body">
+                @if (Model?.Students != null && Model.Students.Any())
+                {
                     <table class="table table-striped table-bordered">
                         <tbody>
                             <tr>
@@ -97,9 +128,11 @@
                             @foreach (var student in Model.Students.Select((value, index) => (value, index)))
                             {
                                 <tr>
-                                    <td class="col-1">@(student.index  + 1)</td>
+                                    <td class="col-1">@(student.index + 1)</td>
                                     <td class="col-2">@student.value.StudentName</td>
-                                    <td class="col-2">@student.value.EnrollmentDate</td>
+                                    <td class="col-2">
+                                        @(student.value.EnrollmentDate?.ToString("dd MMM, yyyy") ?? "No date available")
+                                    </td>
                                     <td class="col-1">
                                         @student.value.Term
                                     </td>
@@ -115,8 +148,23 @@
                             }
                         </tbody>
                     </table>
-                </div>
+                }
+                else
+                {
+                    <div class="text-center align-content-center" style="height:100px">
+                        <h6 class="text-muted">No students enrolled to this course.</h6>
+                        @if (!User.IsInRole("Student"))
+                        {
+                            <a class="btn btn-outline-primary">Enroll Students</a>
+                        }
+                    </div>
+                }
             </div>
         </div>
-    }
+    </div>
+
+    <a asp-controller="Course" asp-action="ManageCourses"
+       class="btn btn-primary">
+        Back
+    </a>
 </div>

@@ -1,6 +1,10 @@
 ﻿using SIMSWeb.Business.IService;
+using SIMSWeb.ConstantsAndUtilities.AuthUtilities;
+using SIMSWeb.Data.Exceptions;
 using SIMSWeb.Data.IRepository;
+using SIMSWeb.Data.Repository;
 using SIMSWeb.Model.Models;
+using SIMSWeb.Model.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,9 +36,30 @@ namespace SIMSWeb.Business.Service
             return await _teacherRepository.GetTeachers();
         }
 
-        public async Task UpdateTeacher(Teacher teacher)
+        public async Task UpdateTeacher(TeacherViewModel teacher)
         {
-            await _teacherRepository.UpdateTeacher(teacher);
+            var teacherData = await _teacherRepository.GetTeacherById(teacher.Id);
+            if (teacherData == null)
+            {
+                throw new NotFoundException("Teacher not found.");
+            }
+
+            if (teacherData.Department != teacher.Department)
+            {
+                teacherData.Department = teacher.Department;
+            }
+
+            if (teacher.HireDate != teacher.HireDate)
+            {
+                teacherData.HireDate = teacher.HireDate;
+            }
+
+            if (teacher.UserId != teacher.UserId)
+            {
+                teacherData.UserId = teacher.UserId;
+            }
+
+            await _teacherRepository.UpdateTeacher(teacherData);
         }
 
         public async Task<Teacher> GetTeacherById(int id)

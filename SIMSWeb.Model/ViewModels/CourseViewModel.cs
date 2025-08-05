@@ -12,5 +12,8 @@ namespace SIMSWeb.Model.ViewModels
         public string Name { get; set; }
         public bool IsActive { get; set; }
         public int? TeacherId { get; set; }
+
+        public bool ModifyTeacher { get; set; } = false;
+        public string? Department { get; set; } = String.Empty;
     }
 }

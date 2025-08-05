@@ -18,6 +18,9 @@ namespace SIMSWeb.Model.Profiles
 
             CreateMap<Course, CourseViewModel>();
             CreateMap<CourseViewModel, Course>();
+
+            CreateMap<Teacher, TeacherViewModel>();
+            CreateMap<TeacherViewModel, Teacher>();
         }
         
     }

@@ -7,6 +7,7 @@ using SIMSWeb.Business.IService;
 using SIMSWeb.Business.Service;
 using SIMSWeb.Business.ServiceDTO.Course;
 using SIMSWeb.Business.ServiceDTO.Teacher;
+using SIMSWeb.Model.Models;
 using SIMSWeb.Model.ViewModels;
 using SIMSWeb.Models;
 using SIMSWeb.Models.Course;
@@ -106,7 +107,7 @@ namespace SIMSWeb.Controllers
         }
 
         [Authorize(Policy = "AdminOnly")]
-        public async Task<ActionResult> EditCourse(int id)
+        public async Task<ActionResult> EditCourse(int id, bool modifyTeacher)
         {
             var courseVM = new UpdateCourseVM();
             var teacherList = await GetTeacherList();
@@ -118,6 +119,8 @@ namespace SIMSWeb.Controllers
             }
 
             courseVM.Course = _mapper.Map<CourseViewModel>(course);
+            courseVM.Course.Department = course?.Teacher?.Department ?? "";
+            courseVM.Course.ModifyTeacher = modifyTeacher;
 
             courseVM.TeachersList = teacherList;
             return View(courseVM);
@@ -129,9 +132,34 @@ namespace SIMSWeb.Controllers
         {
             if (!ModelState.IsValid)
             {
+                if (courseRequest.ModifyTeacher)
+                {
+                    return RedirectToAction("ViewCourse", "Course", new { Id = courseRequest.Id, ModifyTeacher = true });
+                }
+
                 return RedirectToAction("EditCourse", "Course", new { Id = courseRequest.Id });
             }
+            
             await _courseService.UpdateCourse(courseRequest);
+            if (courseRequest.ModifyTeacher)
+            {
+                if (courseRequest?.TeacherId == null)
+                {
+                    return RedirectToAction("ViewCourse", "Course", new { Id = courseRequest.Id });
+                }
+
+                var teacher = new TeacherViewModel
+                {
+                    Id = (int)courseRequest.TeacherId,
+                    Department = courseRequest.Department,
+                    HireDate = DateTime.Now
+
+                };
+                await _teacherService.UpdateTeacher(teacher);
+                TempData["success"] = "Teacher updated successfully";
+                return RedirectToAction("ViewCourse", "Course", new { Id = courseRequest.Id });
+            }
+
             TempData["success"] = "Course updated successfully";
             return RedirectToAction("ManageCourses");
         }
@@ -174,13 +202,14 @@ namespace SIMSWeb.Controllers
 
             var viewModel = new ViewCourseModel
             {
+                Id = course.Id,
                 Name = course.Name,
                 IsActive = course.IsActive,
                 TeacherId = course.TeacherId,
                 TeacherName = course?.Teacher?.User?.Name ?? "",
                 Department = course?.Teacher?.Department ?? "",
                 TeacherHireDate = course?.Teacher?.HireDate,
-                Students = course.Enrollments.Select(e => new Student
+                Students = course.Enrollments.Select(e => new StudentViewDTO
                 {
                     StudentName = e.Student?.User?.Name ?? "",
                     EnrollmentDate = e.Student?.EnrollmentDate,
