@@ -39,13 +39,18 @@ namespace SIMSWeb.Controllers
         }
 
         [HttpGet("Courses")]
-        public async Task<ActionResult> ManageCourses(string CourseSearchText,
-            int Page = 1, int PageSize = 5)
+        public async Task<ActionResult> ManageCourses(int TeacherFilter, 
+            string CourseSearchText, int Page = 1, int PageSize = 5)
         {
             var manageCourseVM = new ManageCourseVM();
 
             // Calculate the skip and take for pagination
             var skip = (Page - 1) * PageSize;
+
+            var teachersList = await GetTeacherList();
+
+            manageCourseVM.FilterModel = new CourseFilterModel();
+            manageCourseVM.FilterModel.TeacherList = teachersList;
 
 
             if (User.IsInRole("Teacher"))
@@ -63,6 +68,8 @@ namespace SIMSWeb.Controllers
                     Name = c.Name,
                     IsActive = c.IsActive,
                     Teacher = c.Teacher,
+                    Description = c.Description
+                    
                 }).ToList();
 
                 manageCourseVM.Paginations = new PaginatedResult<ManageCourseModel>
@@ -79,7 +86,7 @@ namespace SIMSWeb.Controllers
             // Get the total number of records
             var totalRecords = await _courseService.GetCourseCount(CourseSearchText);
 
-            var courses = await _courseService.GetCourses(CourseSearchText,
+            var courses = await _courseService.GetCourses(TeacherFilter, CourseSearchText,
                 skip, PageSize);
             manageCourseVM.Courses = courses.Select(c => new ManageCourseModel
             {
@@ -87,6 +94,7 @@ namespace SIMSWeb.Controllers
                 Name = c.Name,
                 IsActive = c.IsActive,
                 Teacher = c.Teacher,
+                Description = c.Description
             }).ToList();
 
             manageCourseVM.Paginations = new PaginatedResult<ManageCourseModel>

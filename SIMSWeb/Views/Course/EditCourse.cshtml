@@ -32,6 +32,12 @@
             }
             <span asp-validation-for="@Model.Course.Name" class="text-danger"></span>
         </div>
+        <div class="mb-3">
+            <label>Description</label>
+            <textarea asp-for="@Model.Course.Description" rows="5"
+                      name="Description" type="text" class="form-control"></textarea>
+            <span asp-validation-for="@Model.Course.Description" class="text-danger" />
+        </div>
         @if (Model.Course.EnrollStudents)
         {
             <div class="mb-3">

@@ -46,9 +46,11 @@ namespace SIMSWeb.Business.Service
             return await _courseRepository.GetCourseDetailsById(id);
         }
 
-        public async Task<List<Course>> GetCourses(string courseSearchText, int skip, int pageSize)
+        public async Task<List<Course>> GetCourses(int TeacherFilter, 
+            string courseSearchText, int skip, int pageSize)
         {
-            return await _courseRepository.GetCourses(courseSearchText, skip, pageSize);
+            return await _courseRepository.GetCourses(TeacherFilter ,courseSearchText, 
+                skip, pageSize);
         }
 
         public async Task UpdateCourse(CourseViewModel course)

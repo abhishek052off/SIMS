@@ -43,13 +43,20 @@ namespace SIMSWeb.Data.Repository
             return course;
         }
 
-        public async Task<List<Course>> GetCourses(string courseSearchText, int skip, int pageSize)
+        public async Task<List<Course>> GetCourses(int TeacherFilter, 
+            string courseSearchText, int skip, int pageSize)
         {
             IQueryable<Course> courses = _context.Courses;
 
+            if(TeacherFilter > 0 && TeacherFilter != null) {
+                courses = courses.Include(c => c.Teacher)
+                    .Where(t => t.TeacherId == TeacherFilter);
+            }
+
             if (!string.IsNullOrEmpty(courseSearchText))
             {
-                courses = courses.Where(u => u.Name.Contains(courseSearchText));
+                courses = courses.Where(u => u.Name.Contains(courseSearchText)
+                    || (u.Description != null && u.Description.Contains(courseSearchText)));
 
             }
 

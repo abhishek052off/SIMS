@@ -9,7 +9,7 @@ namespace SIMSWeb.Data.IRepository
 {
     public interface ICourseRepository
     {
-        Task<List<Course>> GetCourses(string courseSearchText, int skip, int pageSize);
+        Task<List<Course>> GetCourses(int TeacherFilter, string courseSearchText, int skip, int pageSize);
         Task AddCourse(Course course);
         Task UpdateCourse(Course course);
         Task DeleteCourse(Course course);

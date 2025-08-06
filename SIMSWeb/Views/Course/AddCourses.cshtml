@@ -15,15 +15,23 @@
         <div asp-validation-summary="ModelOnly"></div>
         <div class="mb-3">
             <label>Course Name</label>
-            <input asp-for="@Model.CourseModel.Name" name="Name" type="text" class="form-control" />
+            <input asp-for="@Model.CourseModel.Name" name="Name" type="text" 
+                class="form-control" />
             <span asp-validation-for="@Model.CourseModel.Name" class="text-danger" />
         </div>        
         <div class="mb-3">
             <label>Teacher</label>
-            <select asp-for="@Model.CourseModel.TeacherId" asp-items="@(new SelectList(Model.TeacherListModel, "Id", "Name"))" name="TeacherId" class="form-control">
-                <option value="">Select Teacher</option>
+            <select asp-for="@Model.CourseModel.TeacherId" 
+                asp-items="@(new SelectList(Model.TeacherListModel, "Id", "Name"))" 
+                name="TeacherId" class="form-control">
             </select>
             <span asp-validation-for="@Model.CourseModel.TeacherId" class="text-danger" />
+        </div>
+        <div class="mb-3">
+            <label>Description</label>
+            <textarea asp-for="@Model.CourseModel.Description" rows="5" 
+                name="Description" type="text" class="form-control" ></textarea>
+            <span asp-validation-for="@Model.CourseModel.Description" class="text-danger" />
         </div>
         <div class="row mb-3">
             <div class="col-1">
