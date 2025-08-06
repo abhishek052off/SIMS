@@ -43,14 +43,14 @@ namespace SIMSWeb.Data.Repository
             return course;
         }
 
-        public async Task<List<Course>> GetCourses(int TeacherFilter, 
+        public async Task<List<Course>> GetCourses(int teacherFilter, 
             string courseSearchText, int skip, int pageSize)
         {
             IQueryable<Course> courses = _context.Courses;
 
-            if(TeacherFilter > 0 && TeacherFilter != null) {
+            if(teacherFilter > 0 && teacherFilter != null) {
                 courses = courses.Include(c => c.Teacher)
-                    .Where(t => t.TeacherId == TeacherFilter);
+                    .Where(t => t.TeacherId == teacherFilter);
             }
 
             if (!string.IsNullOrEmpty(courseSearchText))
@@ -101,18 +101,32 @@ namespace SIMSWeb.Data.Repository
             return course;
         }
 
-        public async Task<List<Course>> GetCoursesByUserId(int userId, string courseSearchText, int skip, int pageSize)
+        public async Task<List<Course>> GetCoursesByUserId(int userId, int teacherFilter,
+            string courseSearchText, int skip, int pageSize)
         {
-            IQueryable<Course> courses = _context.Courses.Include(c => c.Teacher);
+            IQueryable<Course> courses =  _context.Courses
+                .Include(c => c.Teacher)
+                    .ThenInclude(t => t.User)
+                 .Include(c => c.Enrollments)
+                    .ThenInclude(e => e.Student)
+                    .ThenInclude(s => s.User);
 
             if (userId > 0)
             {
-                courses = courses.Where(c => c.Teacher.UserId == userId);
+                courses = courses.Where(c => c.Teacher.UserId == userId || 
+                c.Enrollments.Any(e => e.Student.UserId == userId));
+            }
+
+            if (teacherFilter > 0 && teacherFilter != null)
+            {
+                courses = courses.Include(c => c.Teacher)
+                    .Where(t => t.TeacherId == teacherFilter);
             }
 
             if (!string.IsNullOrEmpty(courseSearchText))
             {
-                courses = courses.Where(u => u.Name.Contains(courseSearchText));
+                courses = courses.Where(u => u.Name.Contains(courseSearchText)
+                    || (u.Description != null && u.Description.Contains(courseSearchText)));
 
             }
 

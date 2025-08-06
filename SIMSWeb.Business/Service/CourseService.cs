@@ -71,9 +71,11 @@ namespace SIMSWeb.Business.Service
             return count;
         }
 
-        public async Task<List<Course>> GetCoursesByUserId(int userId, string courseSearchText, int skip, int pageSize)
+        public async Task<List<Course>> GetCoursesByUserId(int userId, int teacherFilter,
+            string courseSearchText, int skip, int pageSize)
         {
-            return await _courseRepository.GetCoursesByUserId(userId, courseSearchText, skip, pageSize);
+            return await _courseRepository.GetCoursesByUserId(userId, teacherFilter,
+                courseSearchText, skip, pageSize);
         }
     }
 }

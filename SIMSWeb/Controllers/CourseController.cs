@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using SIMSWeb.Business.IService;
 using SIMSWeb.Business.Service;
 using SIMSWeb.Business.ServiceDTO.Course;
@@ -39,7 +40,7 @@ namespace SIMSWeb.Controllers
         }
 
         [HttpGet("Courses")]
-        public async Task<ActionResult> ManageCourses(int TeacherFilter, 
+        public async Task<ActionResult> ManageCourses(int TeacherFilter,
             string CourseSearchText, int Page = 1, int PageSize = 5)
         {
             var manageCourseVM = new ManageCourseVM();
@@ -53,11 +54,11 @@ namespace SIMSWeb.Controllers
             manageCourseVM.FilterModel.TeacherList = teachersList;
 
 
-            if (User.IsInRole("Teacher"))
+            if (User.IsInRole("Teacher") || User.IsInRole("Student"))
             {
                 var userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 var courseListForTeacher = await _courseService
-                    .GetCoursesByUserId(Convert.ToInt32(userId),
+                    .GetCoursesByUserId(Convert.ToInt32(userId), TeacherFilter,
                     CourseSearchText, skip, PageSize);
 
                 var totalCoursesOfTeacher = courseListForTeacher.Count;
@@ -69,7 +70,7 @@ namespace SIMSWeb.Controllers
                     IsActive = c.IsActive,
                     Teacher = c.Teacher,
                     Description = c.Description
-                    
+
                 }).ToList();
 
                 manageCourseVM.Paginations = new PaginatedResult<ManageCourseModel>
@@ -82,6 +83,8 @@ namespace SIMSWeb.Controllers
                 return View(manageCourseVM);
 
             }
+
+
 
             // Get the total number of records
             var totalRecords = await _courseService.GetCourseCount(CourseSearchText);
@@ -169,7 +172,7 @@ namespace SIMSWeb.Controllers
 
         }
 
-        [Authorize(Policy = "AdminOnly")]
+        [Authorize(Policy = "AdminTeacherOnly")]
         public async Task<ActionResult> EditCourse(int id, bool modifyTeacher, bool enrollStudents)
         {
             var courseVM = new UpdateCourseVM();
@@ -202,7 +205,7 @@ namespace SIMSWeb.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = "AdminOnly")]
+        [Authorize(Policy = "AdminTeacherOnly")]
         public async Task<ActionResult> EditCourse(CourseViewModel courseRequest)
         {
             if (!ModelState.IsValid)
@@ -223,7 +226,7 @@ namespace SIMSWeb.Controllers
                     return RedirectToAction("ViewCourse", "Course", queryParams);
                 }
 
-                return RedirectToAction("EditCourse", "Course", 
+                return RedirectToAction("EditCourse", "Course",
                     new { Id = courseRequest.Id });
             }
 
@@ -231,7 +234,7 @@ namespace SIMSWeb.Controllers
             {
                 if (courseRequest?.StudentId == null)
                 {
-                    return RedirectToAction("ViewCourse", "Course", 
+                    return RedirectToAction("ViewCourse", "Course",
                         new { Id = courseRequest.Id });
                 }
 
@@ -242,7 +245,7 @@ namespace SIMSWeb.Controllers
                     Comments = courseRequest?.Comments ?? "",
                     Marks = courseRequest?.Marks ?? 0,
                     Term = (int)courseRequest.Term,
-                    
+
                 };
 
                 await _studentService.EnrollStudents(enrollStudent);
@@ -310,6 +313,8 @@ namespace SIMSWeb.Controllers
         {
             var course = await _courseService.GetCourseDetailsById(id);
 
+            var isStudent = User.IsInRole("Student");
+
             var viewModel = new ViewCourseModel
             {
                 Id = course.Id,
@@ -321,14 +326,27 @@ namespace SIMSWeb.Controllers
                 TeacherHireDate = course?.Teacher?.HireDate,
                 Students = course.Enrollments.Select(e => new StudentViewDTO
                 {
-                    StudentName = e.Student?.User?.Name ?? "",
-                    EnrollmentDate = e.Student?.EnrollmentDate,
+                    StudentName = e.Student.User.Name,
+                    EnrollmentDate = e.Student.EnrollmentDate,
                     Term = e.Term,
                     Comments = e.Comments,
-                    Marks = e.Marks
+                    Marks = e.Marks,
+                    UserId = e.Student.UserId
 
                 }).ToList()
             };
+
+            if (isStudent)
+            {
+                var studentUserId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
+                if (studentUserId > 0)
+                {
+                    viewModel.Students = viewModel.Students
+                        .Where(s => s.UserId == studentUserId).ToList();
+                }
+
+            }
 
             return View(viewModel);
         }

@@ -58,6 +58,9 @@ builder.Services.AddScoped<UserSession>();
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+    options.AddPolicy("AdminTeacherOnly", policy => 
+    policy.RequireAssertion(context => context.User.IsInRole("Admin")
+    || context.User.IsInRole("Teacher")));
 });
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();

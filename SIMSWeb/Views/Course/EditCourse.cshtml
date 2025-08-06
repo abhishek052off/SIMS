@@ -35,8 +35,12 @@
         <div class="mb-3">
             <label>Description</label>
             <textarea asp-for="@Model.Course.Description" rows="5"
-                      name="Description" type="text" class="form-control"></textarea>
-            <span asp-validation-for="@Model.Course.Description" class="text-danger" />
+                      name="Description" type="text" class="form-control"
+                      disabled="@(Model.Course.ModifyTeacher || Model.Course.EnrollStudents)"></textarea>
+            @if (Model.Course.ModifyTeacher || Model.Course.EnrollStudents)
+            {
+                <input type="hidden" asp-for="@Model.Course.Description" name="Description" />
+            }
         </div>
         @if (Model.Course.EnrollStudents)
         {
@@ -96,9 +100,8 @@
         </div>
         <div class="row">
             <div class="col-6">
-                <button type="submit" class="btn btn-primary" asp-action="EditCourse"
-                        asp-controller="Course" disabled="@(Model.Course.EnrollStudents &&
-                                                                                                                        (Model.Course?.StudentId == null || Model.Course.StudentId == -1))">
+                <button type="submit" class="btn btn-primary" asp-action="EditCourse" id="btn_update"
+                        asp-controller="Course">
                     Update
                 </button>
                 @if (Model.Course.ModifyTeacher || Model.Course.EnrollStudents)
@@ -130,19 +133,36 @@
     <script type="text/javascript">
         $(document).ready(function () {
 
+            var isTeacherView = $('input[name="ModifyTeacher"]').val();
+            var isStudenEnrollView = $('input[name="EnrollStudents"]').val();
+
+            const disableUpdateCTA = () => {
+                debugger;
+                if(isStudenEnrollView === "true")
+                {
+                    var studentId = +$('select[name="StudentId"]').val();
+                    if(isNaN(studentId) || studentId == -1){
+                        $('#btn_update').attr("disabled", "disabled");
+                    } else{
+                        $('#btn_update').removeAttr("disabled");
+                    }
+                }
+            };
+
             $('select[name="TeacherId"]').on("change", () => {
             // Select the input by name and get its value
                 var teacherId = +$('select[name="TeacherId"]').val();
-                var isTeacherView = $('input[name="ModifyTeacher"]').val();
 
-                console.log({teacherId, isTeacherView});
-
-                if(isTeacherView == "true" && (teacherId == null || teacherId == -1)){
-                    debugger;
+                if(isTeacherView === "true" && (teacherId === null || teacherId === -1)){
                     $('input[name="Department"]').val("");
                 }
             });
 
+            $('select[name="StudentId"]').on("change", () => {
+                disableUpdateCTA();
+            });
+
+            disableUpdateCTA();
         });
     </script>
 }
