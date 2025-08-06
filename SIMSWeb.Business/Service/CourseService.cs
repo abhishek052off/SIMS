@@ -53,6 +53,11 @@ namespace SIMSWeb.Business.Service
 
         public async Task UpdateCourse(CourseViewModel course)
         {
+            if(course.TeacherId == -1)
+            {
+                course.TeacherId = null;
+            }
+
             var _course = _mapper.Map<Course>(course);
 
             await _courseRepository.UpdateCourse(_course);
@@ -62,6 +67,11 @@ namespace SIMSWeb.Business.Service
         {
             var count = await _courseRepository.GetCourseCount(searchText);
             return count;
+        }
+
+        public async Task<List<Course>> GetCoursesByUserId(int userId, string courseSearchText, int skip, int pageSize)
+        {
+            return await _courseRepository.GetCoursesByUserId(userId, courseSearchText, skip, pageSize);
         }
     }
 }

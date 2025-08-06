@@ -39,9 +39,17 @@ namespace SIMSWeb.Data.Repository
             return student;
         }
 
-        public async Task<List<Student>> GetStudents()
+        /**
+         * Populate only Students data and the students which are not enrolled to the course.
+         */
+        public async Task<List<Student>> GetStudents(int courseId)
         {
-            var students = await _dbContext.Students.ToListAsync();
+            var students = await _dbContext.Students
+                .Include(s => s.User)
+                .Include(s => s.Enrollments)
+                .Where(s => s.User.Role == "Student" && 
+                !s.Enrollments.Any(e => e.CourseId == courseId))
+                .ToListAsync();
             return students;
         }
 
@@ -58,6 +66,12 @@ namespace SIMSWeb.Data.Repository
                 .Where(u => u.UserId == id)
                 .FirstOrDefaultAsync() ?? throw new NotFoundException("Student not found");
             return student;
+        }
+
+        public async Task EnrollStudents(Enrollment enrolledDetails)
+        {
+            _dbContext.Enrollments.Add(enrolledDetails);
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

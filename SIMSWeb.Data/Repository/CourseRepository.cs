@@ -8,6 +8,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
 
 namespace SIMSWeb.Data.Repository
 {
@@ -89,6 +92,29 @@ namespace SIMSWeb.Data.Repository
                  .FirstOrDefaultAsync();   
             
             return course;
+        }
+
+        public async Task<List<Course>> GetCoursesByUserId(int userId, string courseSearchText, int skip, int pageSize)
+        {
+            IQueryable<Course> courses = _context.Courses.Include(c => c.Teacher);
+
+            if (userId > 0)
+            {
+                courses = courses.Where(c => c.Teacher.UserId == userId);
+            }
+
+            if (!string.IsNullOrEmpty(courseSearchText))
+            {
+                courses = courses.Where(u => u.Name.Contains(courseSearchText));
+
+            }
+
+            courses = courses.Include(c => c.Teacher)
+                .ThenInclude(t => t.User)
+                .Skip(skip).Take(pageSize);
+
+            var courseList = await courses.ToListAsync();
+            return courseList;
         }
     }
 }

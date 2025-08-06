@@ -3,13 +3,18 @@
 @model UpdateCourseVM;
 
 @{
-    var title = Model.Course.ModifyTeacher ? "Modify Teacher" : "Edit Course";
+    var title = Model.Course.ModifyTeacher
+    ? "Assign Teacher"
+    : Model.Course.EnrollStudents
+    ? "Enroll Students"
+    : "Edit Course";
     ViewData["Title"] = title;
 }
 
 <form method="post" asp-action="EditCourse" asp-controller="Course">
     <input asp-for="@Model.Course.Id" name="Id" hidden />
     <input asp-for="@Model.Course.ModifyTeacher" name="ModifyTeacher" hidden />
+    <input asp-for="@Model.Course.EnrollStudents" name="EnrollStudents" hidden />
 
     <div class="p-3 pt-4 gap-2">
         <div class="row">
@@ -19,19 +24,33 @@
         <div asp-validation-summary="ModelOnly"></div>
         <div class="mb-3">
             <label>Course Name</label>
-            <input asp-for="@Model.Course.Name" name="Name" type="text" class="form-control" disabled="@Model.Course.ModifyTeacher" />
-            @if (Model.Course.ModifyTeacher)
+            <input asp-for="@Model.Course.Name" name="Name" type="text" class="form-control"
+                   disabled="@(Model.Course.ModifyTeacher || Model.Course.EnrollStudents)" />
+            @if (Model.Course.ModifyTeacher || Model.Course.EnrollStudents)
             {
                 <input type="hidden" asp-for="@Model.Course.Name" name="Name" />
             }
             <span asp-validation-for="@Model.Course.Name" class="text-danger"></span>
         </div>
-        <div class="mb-3">
-            <label>Teacher</label>
-            <select asp-for="@Model.Course.TeacherId" asp-items="@(new SelectList(Model.TeachersList, "Id", "Name"))"
-                    name="TeacherId" class="form-control">
-            </select>
-        </div>
+        @if (Model.Course.EnrollStudents)
+        {
+            <div class="mb-3">
+                <label>Students</label>
+                <select asp-for="@Model.Course.StudentId" asp-items="@(new SelectList(Model.StudentList, "Id", "Name"))"
+                        name="StudentId" class="form-control">
+                </select>
+            </div>
+        }
+        else
+        {
+            <div class="mb-3">
+                <label>Teacher</label>
+                <select asp-for="@Model.Course.TeacherId" asp-items="@(new SelectList(Model.TeachersList, "Id", "Name"))"
+                        name="TeacherId" class="form-control">
+                </select>
+            </div>
+        }
+
         @if (Model.Course.ModifyTeacher)
         {
             <div class="mb-3">
@@ -40,14 +59,30 @@
 
             </div>
         }
+        @if (Model.Course.EnrollStudents)
+        {
+            <div class="mb-3">
+                <label class="form-label">Term</label>
+                <input asp-for="@Model.Course.Term" name="Term" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Marks</label>
+                <input asp-for="@Model.Course.Marks" name="Marks" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Comments</label>
+                <textarea asp-for="@Model.Course.Comments" rows="5" name="Comments" class="form-control"></textarea>
+            </div>
+        }
         <div class="row mb-3">
             <div class="col-1">
                 <label class="form-label">Active</label>
             </div>
             <div class="col-1">
                 <input asp-for="@Model.Course.IsActive" name="IsActive" type="checkbox"
-                       checked disabled="@Model.Course.ModifyTeacher" class="form-check" />
-                @if (Model.Course.ModifyTeacher)
+                       checked disabled="@(Model.Course.ModifyTeacher || Model.Course.EnrollStudents)"
+                       class="form-check" />
+                @if (Model.Course.ModifyTeacher || Model.Course.EnrollStudents)
                 {
                     <input type="hidden" asp-for="@Model.Course.IsActive" name="IsActive" />
                 }
@@ -56,10 +91,11 @@
         <div class="row">
             <div class="col-6">
                 <button type="submit" class="btn btn-primary" asp-action="EditCourse"
-                        asp-controller="Course">
+                        asp-controller="Course" disabled="@(Model.Course.EnrollStudents &&
+                                                                                                                        (Model.Course?.StudentId == null || Model.Course.StudentId == -1))">
                     Update
                 </button>
-                @if (Model.Course.ModifyTeacher)
+                @if (Model.Course.ModifyTeacher || Model.Course.EnrollStudents)
                 {
                     <a asp-controller="Course" asp-action="ViewCourse" asp-route-id="@Model.Course.Id"
                        class="btn btn-outline-primary">
@@ -72,7 +108,7 @@
                         Cancel
                     </a>
                 }
-                
+
             </div>
         </div>
     </div>
@@ -84,4 +120,25 @@
     @{
         <partial name="_ValidationScriptsPartial" />
     }
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $('select[name="TeacherId"]').on("change", () => {
+            // Select the input by name and get its value
+                var teacherId = +$('select[name="TeacherId"]').val();
+                var isTeacherView = $('input[name="ModifyTeacher"]').val();
+
+                console.log({teacherId, isTeacherView});
+
+                if(isTeacherView == "true" && (teacherId == null || teacherId == -1)){
+                    debugger;
+                    $('input[name="Department"]').val("");
+                }
+            });
+
+        });
+    </script>
 }
+
+

@@ -14,11 +14,9 @@ namespace SIMSWeb.Controllers
     public class LoginController : Controller
     {
         private readonly IUserService _userService;
-        private readonly IConfiguration _configuration;
-        public LoginController(IUserService userService, IConfiguration configuration)
+        public LoginController(IUserService userService)
         {
             _userService = userService;
-            _configuration = configuration;
         }
 
         public IActionResult Index()
@@ -44,6 +42,7 @@ namespace SIMSWeb.Controllers
                 //var token = GenerateToken(user);
                 var claims = new List<Claim>
                 {
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                     new Claim(ClaimTypes.Name, user.Name),
                     new Claim(ClaimTypes.Role, user.Role),
                     new Claim(ClaimTypes.Email, user.Email)

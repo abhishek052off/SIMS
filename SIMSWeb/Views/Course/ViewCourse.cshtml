@@ -108,7 +108,9 @@
                 Student Details
                 @if (!User.IsInRole("Student") && Model?.Students != null && Model.Students.Any())
                 {
-                    <a class="btn btn-outline-primary">Enroll Students</a>
+                    <a class="btn btn-outline-primary" asp-controller="Course"
+                       asp-action="EditCourse" asp-route-id="@Model.Id" 
+                       asp-route-enrollStudents="true">Enroll Students</a>
                 }
             </div>
             <div class="card-body">
@@ -123,7 +125,6 @@
                                 <th>Term</th>
                                 <th>Score</th>
                                 <th>Remarks</th>
-                                <th></th>
                             </tr>
                             @foreach (var student in Model.Students.Select((value, index) => (value, index)))
                             {
@@ -142,7 +143,6 @@
                                     <td>
                                         @student.value.Comments
                                     </td>
-                                    <td></td>
                                 </tr>
 
                             }
@@ -155,7 +155,9 @@
                         <h6 class="text-muted">No students enrolled to this course.</h6>
                         @if (!User.IsInRole("Student"))
                         {
-                            <a class="btn btn-outline-primary">Enroll Students</a>
+                            <a class="btn btn-outline-primary" asp-controller="Course"
+                               asp-action="EditCourse" asp-route-id="@Model.Id"
+                               asp-route-enrollStudents="true">Enroll Students</a>
                         }
                     </div>
                 }

@@ -1,6 +1,8 @@
-﻿using SIMSWeb.Business.IService;
+﻿using AutoMapper;
+using SIMSWeb.Business.IService;
 using SIMSWeb.Data.IRepository;
 using SIMSWeb.Model.Models;
+using SIMSWeb.Model.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,14 +14,18 @@ namespace SIMSWeb.Business.Service
     public class StudentService : IStudentService
     {
         private readonly IStudentRepository _studentRepository;
-        public StudentService(IStudentRepository studentRepo)
+        private readonly IMapper _mapper;
+
+        public StudentService(IStudentRepository studentRepo, IMapper mapper)
         {
             _studentRepository = studentRepo;
+            _mapper = mapper;
         }
 
-        public async Task AddStudent(Student student)
+        public async Task AddStudent(StudentViewModel student)
         {
-            await _studentRepository.AddStudent(student);
+            var _student = _mapper.Map<Student>(student);
+            await _studentRepository.AddStudent(_student);
         }
 
         public async Task DeleteStudent(Student student)
@@ -27,14 +33,20 @@ namespace SIMSWeb.Business.Service
             await _studentRepository.DeleteStudent(student);
         }
 
-        public async Task<List<Student>> GetStudents()
+        public async Task<List<Student>> GetStudents(int courseId)
         {
-            return await _studentRepository.GetStudents();
+            return await _studentRepository.GetStudents(courseId);
         }
 
         public async Task UpdateStudent(Student student)
         {
             await _studentRepository.UpdateStudent(student);
+        }
+
+        public async Task EnrollStudents(EnrollmentViewModel enrolledDetails)
+        {
+            var enrolledData = _mapper.Map<Enrollment>(enrolledDetails);
+            await _studentRepository.EnrollStudents(enrolledData);
         }
     }
 }

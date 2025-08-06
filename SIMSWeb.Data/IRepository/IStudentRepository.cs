@@ -9,11 +9,12 @@ namespace SIMSWeb.Data.IRepository
 {
     public interface IStudentRepository
     {
-        Task<List<Student>> GetStudents();
+        Task<List<Student>> GetStudents(int courseId);
         Task AddStudent(Student student);
         Task UpdateStudent(Student student);
         Task DeleteStudent(Student student);
         Task<Student> GetStudentById(int id);
         Task<Student> GetStudentByUserId(int id);
+        Task EnrollStudents(Enrollment enrolledDetails);
     }
 }

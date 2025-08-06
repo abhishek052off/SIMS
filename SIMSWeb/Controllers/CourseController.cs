@@ -6,13 +6,14 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using SIMSWeb.Business.IService;
 using SIMSWeb.Business.Service;
 using SIMSWeb.Business.ServiceDTO.Course;
+using SIMSWeb.Business.ServiceDTO.Student;
 using SIMSWeb.Business.ServiceDTO.Teacher;
 using SIMSWeb.Model.Models;
 using SIMSWeb.Model.ViewModels;
 using SIMSWeb.Models;
 using SIMSWeb.Models.Course;
-using SIMSWeb.Models.User;
 using System.Drawing.Printing;
+using System.Security.Claims;
 
 namespace SIMSWeb.Controllers
 {
@@ -20,11 +21,16 @@ namespace SIMSWeb.Controllers
     {
         private readonly ICourseService _courseService;
         private readonly ITeacherService _teacherService;
+        private readonly IStudentService _studentService;
         private readonly IMapper _mapper;
-        public CourseController(ICourseService courseService, ITeacherService teacherService, IMapper mapper)
+
+        public CourseController(ICourseService courseService,
+            ITeacherService teacherService, IStudentService studentService,
+            IMapper mapper)
         {
             _courseService = courseService;
             _teacherService = teacherService;
+            _studentService = studentService;
             _mapper = mapper;
         }
         public IActionResult Index()
@@ -33,17 +39,48 @@ namespace SIMSWeb.Controllers
         }
 
         [HttpGet("Courses")]
-        public async Task<ActionResult> ManageCourses(string CourseSearchText, int Page = 1, int PageSize = 5)
+        public async Task<ActionResult> ManageCourses(string CourseSearchText,
+            int Page = 1, int PageSize = 5)
         {
             var manageCourseVM = new ManageCourseVM();
 
             // Calculate the skip and take for pagination
             var skip = (Page - 1) * PageSize;
 
+
+            if (User.IsInRole("Teacher"))
+            {
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                var courseListForTeacher = await _courseService
+                    .GetCoursesByUserId(Convert.ToInt32(userId),
+                    CourseSearchText, skip, PageSize);
+
+                var totalCoursesOfTeacher = courseListForTeacher.Count;
+
+                manageCourseVM.Courses = courseListForTeacher.Select(c => new ManageCourseModel
+                {
+                    Id = c.Id,
+                    Name = c.Name,
+                    IsActive = c.IsActive,
+                    Teacher = c.Teacher,
+                }).ToList();
+
+                manageCourseVM.Paginations = new PaginatedResult<ManageCourseModel>
+                {
+                    Items = manageCourseVM.Courses,
+                    TotalRecords = totalCoursesOfTeacher,
+                    PageSize = PageSize,
+                    CurrentPage = Page
+                };
+                return View(manageCourseVM);
+
+            }
+
             // Get the total number of records
             var totalRecords = await _courseService.GetCourseCount(CourseSearchText);
 
-            var courses = await _courseService.GetCourses(CourseSearchText, skip, PageSize);
+            var courses = await _courseService.GetCourses(CourseSearchText,
+                skip, PageSize);
             manageCourseVM.Courses = courses.Select(c => new ManageCourseModel
             {
                 Id = c.Id,
@@ -80,6 +117,24 @@ namespace SIMSWeb.Controllers
             return teacherList;
         }
 
+        public async Task<List<StudentSelect>> GetStudentsList(int courseId)
+        {
+            var students = await _studentService.GetStudents(courseId);
+            var studentList = students.Select(u => new StudentSelect
+            {
+                Id = u.Id,
+                Name = u.User.Name,
+            }).ToList();
+
+            studentList.Insert(0, new StudentSelect
+            {
+                Id = -1,
+                Name = "Select Student"
+            });
+
+            return studentList;
+        }
+
         [Authorize(Policy = "AdminOnly")]
         public async Task<ActionResult> AddCourses()
         {
@@ -107,12 +162,12 @@ namespace SIMSWeb.Controllers
         }
 
         [Authorize(Policy = "AdminOnly")]
-        public async Task<ActionResult> EditCourse(int id, bool modifyTeacher)
+        public async Task<ActionResult> EditCourse(int id, bool modifyTeacher, bool enrollStudents)
         {
             var courseVM = new UpdateCourseVM();
-            var teacherList = await GetTeacherList();
 
-            var course = await _courseService.GetCourseById(id);
+
+            var course = await _courseService.GetCourseDetailsById(id);
             if (course == null)
             {
                 return RedirectToAction("ManageCourses");
@@ -121,8 +176,20 @@ namespace SIMSWeb.Controllers
             courseVM.Course = _mapper.Map<CourseViewModel>(course);
             courseVM.Course.Department = course?.Teacher?.Department ?? "";
             courseVM.Course.ModifyTeacher = modifyTeacher;
+            courseVM.Course.EnrollStudents = enrollStudents;
 
-            courseVM.TeachersList = teacherList;
+            // Map teacher list for Admin and Teacher view
+            if (!enrollStudents)
+            {
+                var teacherList = await GetTeacherList();
+                courseVM.TeachersList = teacherList;
+            }
+            else
+            {
+                var studentList = await GetStudentsList(id);
+                courseVM.StudentList = studentList;
+            }
+
             return View(courseVM);
         }
 
@@ -132,14 +199,49 @@ namespace SIMSWeb.Controllers
         {
             if (!ModelState.IsValid)
             {
-                if (courseRequest.ModifyTeacher)
+                if (courseRequest.ModifyTeacher || courseRequest.EnrollStudents)
                 {
-                    return RedirectToAction("ViewCourse", "Course", new { Id = courseRequest.Id, ModifyTeacher = true });
+                    var queryParams = new Dictionary<string, object>();
+                    queryParams["Id"] = courseRequest.Id;
+
+                    if (courseRequest.ModifyTeacher)
+                    {
+                        queryParams["ModifyTeacher"] = true;
+                    }
+                    else
+                    {
+                        queryParams["EnrollStudents"] = true;
+                    }
+                    return RedirectToAction("ViewCourse", "Course", queryParams);
                 }
 
-                return RedirectToAction("EditCourse", "Course", new { Id = courseRequest.Id });
+                return RedirectToAction("EditCourse", "Course", 
+                    new { Id = courseRequest.Id });
             }
-            
+
+            if (courseRequest.EnrollStudents)
+            {
+                if (courseRequest?.StudentId == null)
+                {
+                    return RedirectToAction("ViewCourse", "Course", 
+                        new { Id = courseRequest.Id });
+                }
+
+                var enrollStudent = new EnrollmentViewModel
+                {
+                    CourseId = courseRequest.Id,
+                    StudentId = (int)courseRequest.StudentId,
+                    Comments = courseRequest?.Comments ?? "",
+                    Marks = courseRequest?.Marks ?? 0,
+                    Term = (int)courseRequest.Term,
+                    
+                };
+
+                await _studentService.EnrollStudents(enrollStudent);
+                TempData["success"] = "Student enrolled successfully";
+                return RedirectToAction("ViewCourse", "Course", new { Id = courseRequest.Id });
+            }
+
             await _courseService.UpdateCourse(courseRequest);
             if (courseRequest.ModifyTeacher)
             {
