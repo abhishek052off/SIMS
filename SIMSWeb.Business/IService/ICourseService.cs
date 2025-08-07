@@ -18,7 +18,7 @@ namespace SIMSWeb.Business.IService
         Task DeleteCourse(int id);
         Task<Course> GetCourseById(int id);
         Task<Course> GetCourseDetailsById(int id);
-        Task<int> GetCourseCount(string searchText);
+        Task<int> GetCourseCount(int teacherFilter, string searchText);
 
     }
 }

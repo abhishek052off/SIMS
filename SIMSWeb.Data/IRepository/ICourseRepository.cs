@@ -14,7 +14,7 @@ namespace SIMSWeb.Data.IRepository
         Task UpdateCourse(Course course);
         Task DeleteCourse(Course course);
         Task<Course> GetCourseById(int id);
-        Task<int> GetCourseCount(string searchText);
+        Task<int> GetCourseCount(int teacherFilter, string searchText);
         Task<Course> GetCourseDetailsById(int id);
         Task<List<Course>> GetCoursesByUserId(int userId, int teacherFilter, string courseSearchText, int skip, int pageSize);
     }

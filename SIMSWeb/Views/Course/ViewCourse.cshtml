@@ -5,103 +5,12 @@
 
 @model ViewCourseModel;
 
-<style>
-    .control-label {
-        width: 150px;
-    }
-</style>
-
 <div class="container">
     <input asp-for="@Model.Id" name="Id" hidden />
-    <div class="row col-12">
-        <div class="card mb-3">
-            <div class="card-header h5 fw-bold">Course Details</div>
-            <div class="card-body">
-                <div class="row g-3 align-items-center">
-                    <div class="col-auto">
-                        <label class="col-form-label control-label card-body fw-bold">Course Name:</label>
-                    </div>
-                    <div class="col-auto">
-                        @Model.Name
-                    </div>
-                </div>
-                <div class="row g-3 align-items-center">
-                    <div class="col-auto">
-                        <label class="col-form-label control-label card-body fw-bold">Teacher name:</label>
-                    </div>
-                    <div class="col-auto">
-                        @(!string.IsNullOrEmpty(Model?.TeacherName) ? Model.TeacherName : "")
-                    </div>
-                </div>
-                <div class="row g-3 align-items-center">
-                    <div class="col-auto">
-                        <label class="col-form-label control-label card-body fw-bold">Status:</label>
-                    </div>
-                    <div class="col-auto">
-                        @(Model.IsActive ? "Active" : "Not Active")
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <partial name="_CourseViewPartial" model="@Model"/>
     <!--Faculty details-->
-    <div class="row col-12">
-        <div class="card mb-3">
-            <div class="card-header h5 fw-bold d-flex justify-content-between">
-                Faculty Details
-                @if (User.IsInRole("Admin") && Model.TeacherId > 0)
-                {
-                    <a class="btn btn-outline-primary" asp-controller="Course"
-                       asp-action="EditCourse" asp-route-id="@Model.Id" asp-route-modifyTeacher="true">
-                        Assign Teacher
-                    </a>
-                }
-            </div>
-            <div class="card-body">
-                @if (Model.TeacherId > 0)
-                {
-                    <div class="row g-3 align-items-center">
-                        <div class="col-auto">
-                            <label class="col-form-label control-label card-body fw-bold">Teacher Name:</label>
-                        </div>
-                        <div class="col-auto">
-                            @Model.TeacherName
-                        </div>
-                    </div>
-                    <div class="row g-3 align-items-center">
-                        <div class="col-auto">
-                            <label class="col-form-label control-label card-body fw-bold">Department</label>
-                        </div>
-                        <div class="col-auto">
-                            @Model.Department
-                        </div>
-                    </div>
-                    <div class="row g-3 align-items-center">
-                        <div class="col-auto">
-                            <label class="col-form-label control-label card-body fw-bold">Date Joined</label>
-                        </div>
-                        <div class="col-auto">
-                            @(Model?.TeacherHireDate?.ToString("dd MMM, yyyy") ?? "No date available")
-                        </div>
-                    </div>
-                }
-                else
-                {
-                    <div class="text-center align-content-center" style="height:100px">
-                        <h6 class="text-muted">No teacher assigned to this course.</h6>
-                        @if (User.IsInRole("Admin"))
-                        {
-                            <a class="btn btn-outline-primary" asp-controller="Course"
-                               asp-action="EditCourse" asp-route-id="@Model.Id" asp-route-modifyTeacher="true">
-                                Assign Teacher
-                            </a>
-                        }
-                    </div>
-                }
-            </div>
-        </div>
-    </div>
-    <!--Student details-->
+    <partial name="_TeacherViewPartial" model="@Model" />
+   <!--Student details-->
     <div class="row col-12">
         <div class="card mb-3">
             <div class="card-header h5 fw-bold d-flex justify-content-between">

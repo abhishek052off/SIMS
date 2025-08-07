@@ -1,0 +1,29 @@
+﻿@using SIMSWeb.Models.Course;
+
+@model StudentViewDTO;
+
+<div class="row col-12">
+    <div class="card mb-3">
+        <div class="card-header h5 fw-bold d-flex justify-content-between">
+            Student Details
+        </div>
+        <div class="card-body">
+            <div class="row g-3 align-items-center">
+                <div class="col-auto">
+                    <label class="col-form-label control-label card-body fw-bold">Student Name:</label>
+                </div>
+                <div class="col-auto">
+                    @Model.StudentName
+                </div>
+            </div>
+            <div class="row g-3 align-items-center">
+                <div class="col-auto">
+                    <label class="col-form-label control-label card-body fw-bold">Enrollment Date:</label>
+                </div>
+                <div class="col-auto">
+                    @(Model.EnrollmentDate?.ToString("dd MMM, yyyy") ?? "No date available")
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

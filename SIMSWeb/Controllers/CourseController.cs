@@ -54,6 +54,9 @@ namespace SIMSWeb.Controllers
             manageCourseVM.FilterModel.TeacherList = teachersList;
 
 
+            ViewBag.TeacherId = TeacherFilter == 0 ? -1 : TeacherFilter;
+            ViewBag.CourseSearchText = CourseSearchText ?? String.Empty;
+
             if (User.IsInRole("Teacher") || User.IsInRole("Student"))
             {
                 var userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
@@ -61,7 +64,7 @@ namespace SIMSWeb.Controllers
                     .GetCoursesByUserId(Convert.ToInt32(userId), TeacherFilter,
                     CourseSearchText, skip, PageSize);
 
-                var totalCoursesOfTeacher = courseListForTeacher.Count;
+                var totalCoursesOfTeacher = await _courseService.GetCourseCount(TeacherFilter, CourseSearchText);
 
                 manageCourseVM.Courses = courseListForTeacher.Select(c => new ManageCourseModel
                 {
@@ -80,6 +83,8 @@ namespace SIMSWeb.Controllers
                     PageSize = PageSize,
                     CurrentPage = Page
                 };
+
+
                 return View(manageCourseVM);
 
             }
@@ -87,7 +92,7 @@ namespace SIMSWeb.Controllers
 
 
             // Get the total number of records
-            var totalRecords = await _courseService.GetCourseCount(CourseSearchText);
+            var totalRecords = await _courseService.GetCourseCount(TeacherFilter, CourseSearchText);
 
             var courses = await _courseService.GetCourses(TeacherFilter, CourseSearchText,
                 skip, PageSize);
@@ -321,6 +326,7 @@ namespace SIMSWeb.Controllers
                 Name = course.Name,
                 IsActive = course.IsActive,
                 TeacherId = course.TeacherId,
+                Description = course.Description,
                 TeacherName = course?.Teacher?.User?.Name ?? "",
                 Department = course?.Teacher?.Department ?? "",
                 TeacherHireDate = course?.Teacher?.HireDate,

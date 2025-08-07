@@ -17,6 +17,7 @@ namespace SIMSWeb.Models.Course
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public string Description { get; set; }
         public bool IsActive { get; set; }
         public int? TeacherId { get; set; }
         public string? TeacherName { get; set; }

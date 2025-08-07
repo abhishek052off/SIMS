@@ -11,16 +11,20 @@ using System.Threading.Tasks;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Http;
+using SIMSWeb.ConstantsAndUtilities;
 
 namespace SIMSWeb.Data.Repository
 {
     public class CourseRepository : ICourseRepository
     {
         private readonly SIMSDBContext _context;
+        private readonly UserSession _userSession;
 
-        public CourseRepository(SIMSDBContext context)
+        public CourseRepository(SIMSDBContext context, UserSession session)
         {
             _context = context;
+            _userSession = session;
         }
 
         public async Task AddCourse(Course course)
@@ -74,9 +78,31 @@ namespace SIMSWeb.Data.Repository
             await _context.SaveChangesAsync();
         }
 
-        public async Task<int> GetCourseCount( string searchText)
+        public async Task<int> GetCourseCount(int teacherFilter, string searchText)
         {
-            IQueryable<Course> courses = _context.Courses;
+            IQueryable<Course> courses = _context.Courses
+                .Include(c => c.Teacher)
+                    .ThenInclude(t => t.User);
+
+            if(_userSession.Role == UsersConstants.STUDENT_ROLE)
+            {
+                courses = courses.Include(c => c.Enrollments)
+                    .ThenInclude(e => e.Student)
+                    .ThenInclude(s => s.User);
+            }
+
+            if ((_userSession.Role == UsersConstants.STUDENT_ROLE || 
+                _userSession.Role == UsersConstants.STUDENT_ROLE) && _userSession.Id > 0)
+            {
+                courses = courses.Where(c => c.Teacher.UserId == _userSession.Id  ||
+                c.Enrollments.Any(e => e.Student.UserId == _userSession.Id));
+            }
+
+            if (teacherFilter > 0 && teacherFilter != null)
+            {
+                courses = courses.Include(c => c.Teacher)
+                    .Where(t => t.TeacherId == teacherFilter);
+            }
 
             if (!string.IsNullOrEmpty(searchText))
             {
@@ -84,7 +110,8 @@ namespace SIMSWeb.Data.Repository
 
             }
 
-            return await courses.CountAsync();
+            return await courses
+                .Include(c => c.Teacher).CountAsync();
         }
 
         public async Task<Course> GetCourseDetailsById(int id)

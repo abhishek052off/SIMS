@@ -65,9 +65,9 @@ namespace SIMSWeb.Business.Service
             await _courseRepository.UpdateCourse(_course);
         }
 
-        public async Task<int> GetCourseCount(string searchText)
+        public async Task<int> GetCourseCount(int teacherFilter, string searchText)
         {
-            var count = await _courseRepository.GetCourseCount(searchText);
+            var count = await _courseRepository.GetCourseCount(teacherFilter, searchText);
             return count;
         }
 

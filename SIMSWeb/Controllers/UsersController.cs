@@ -69,7 +69,9 @@ namespace SIMSWeb.Controllers
                     Text = UsersConstants.STUDENT_ROLE,
                     Value = UsersConstants.STUDENT_ROLE
                 }
-            }, "Value", "Text");
+            }, "Value", "Text", UserRole);
+
+            ViewBag.UserSearchText = SearchText ?? String.Empty;
 
             manageUsersVM.Paginations = new PaginatedResult<ManageUsersModel>
             {

@@ -22,6 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\SIMSWeb.ConstantsAndUtilities\SIMSWeb.ConstantsAndUtilities.csproj" />
     <ProjectReference Include="..\SIMSWeb.Model\SIMSWeb.Model.csproj" />
   </ItemGroup>
 
