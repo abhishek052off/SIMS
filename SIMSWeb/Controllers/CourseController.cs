@@ -224,7 +224,7 @@ namespace SIMSWeb.Controllers
                     {
                         queryParams["ModifyTeacher"] = true;
                     }
-                    else
+                    else if (courseRequest.EnrollStudents)
                     {
                         queryParams["EnrollStudents"] = true;
                     }
@@ -330,6 +330,7 @@ namespace SIMSWeb.Controllers
                 TeacherName = course?.Teacher?.User?.Name ?? "",
                 Department = course?.Teacher?.Department ?? "",
                 TeacherHireDate = course?.Teacher?.HireDate,
+                AssignmentsCount = course?.Assignments?.Count ?? 0,
                 Students = course.Enrollments.Select(e => new StudentViewDTO
                 {
                     StudentName = e.Student.User.Name,

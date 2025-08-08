@@ -28,6 +28,6 @@ namespace SIMSWeb.Models.Course
 
         public List<StudentViewDTO>? Students { get; set;}
 
-
+        public int? AssignmentsCount { get; set; }
     }
 }

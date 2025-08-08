@@ -12,6 +12,7 @@ namespace SIMSWeb.Model.Models
         public DateTime EnrollmentDate { get; set; }
 
         public List<Enrollment> Enrollments { get; set; }
+        public List<Submission> Submissions { get; set; }
 
         public int UserId { get; set; }
         public User User { get; set; }

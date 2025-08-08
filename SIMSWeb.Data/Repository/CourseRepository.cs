@@ -41,18 +41,19 @@ namespace SIMSWeb.Data.Repository
 
         public async Task<Course> GetCourseById(int id)
         {
-           var course = await _context.Courses
-                .Where(c => c.Id == id)
-                .FirstOrDefaultAsync() ?? throw new NotFoundException("Course not found");
+            var course = await _context.Courses
+                 .Where(c => c.Id == id)
+                 .FirstOrDefaultAsync() ?? throw new NotFoundException("Course not found");
             return course;
         }
 
-        public async Task<List<Course>> GetCourses(int teacherFilter, 
+        public async Task<List<Course>> GetCourses(int teacherFilter,
             string courseSearchText, int skip, int pageSize)
         {
             IQueryable<Course> courses = _context.Courses;
 
-            if(teacherFilter > 0 && teacherFilter != null) {
+            if (teacherFilter > 0 && teacherFilter != null)
+            {
                 courses = courses.Include(c => c.Teacher)
                     .Where(t => t.TeacherId == teacherFilter);
             }
@@ -84,17 +85,17 @@ namespace SIMSWeb.Data.Repository
                 .Include(c => c.Teacher)
                     .ThenInclude(t => t.User);
 
-            if(_userSession.Role == UsersConstants.STUDENT_ROLE)
+            if (_userSession.Role == UsersConstants.STUDENT_ROLE)
             {
                 courses = courses.Include(c => c.Enrollments)
                     .ThenInclude(e => e.Student)
                     .ThenInclude(s => s.User);
             }
 
-            if ((_userSession.Role == UsersConstants.STUDENT_ROLE || 
+            if ((_userSession.Role == UsersConstants.STUDENT_ROLE ||
                 _userSession.Role == UsersConstants.STUDENT_ROLE) && _userSession.Id > 0)
             {
-                courses = courses.Where(c => c.Teacher.UserId == _userSession.Id  ||
+                courses = courses.Where(c => c.Teacher.UserId == _userSession.Id ||
                 c.Enrollments.Any(e => e.Student.UserId == _userSession.Id));
             }
 
@@ -116,31 +117,33 @@ namespace SIMSWeb.Data.Repository
 
         public async Task<Course> GetCourseDetailsById(int id)
         {
-            var course = await _context.Courses                
+            var course = await _context.Courses
                 .Include(c => c.Teacher)
                     .ThenInclude(t => t.User)
-                 .Include(c => c.Enrollments)
+                .Include(c => c.Assignments)
+                .Include(c => c.Enrollments)
                     .ThenInclude(e => e.Student)
-                    .ThenInclude(s => s.User)
+                    .ThenInclude(s => s.User)                
                  .Where(c => c.Id == id)
-                 .FirstOrDefaultAsync();   
-            
+                 .FirstOrDefaultAsync();
+
             return course;
         }
 
         public async Task<List<Course>> GetCoursesByUserId(int userId, int teacherFilter,
             string courseSearchText, int skip, int pageSize)
         {
-            IQueryable<Course> courses =  _context.Courses
+            IQueryable<Course> courses = _context.Courses
                 .Include(c => c.Teacher)
                     .ThenInclude(t => t.User)
                  .Include(c => c.Enrollments)
                     .ThenInclude(e => e.Student)
-                    .ThenInclude(s => s.User);
+                    .ThenInclude(s => s.User)
+                  .Include(c => c.Assignments);
 
             if (userId > 0)
             {
-                courses = courses.Where(c => c.Teacher.UserId == userId || 
+                courses = courses.Where(c => c.Teacher.UserId == userId ||
                 c.Enrollments.Any(e => e.Student.UserId == userId));
             }
 

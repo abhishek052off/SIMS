@@ -20,6 +20,9 @@ namespace SIMSWeb.Data.Context
         public DbSet<Teacher> Teachers { get; set; }
         public DbSet<Course> Courses { get; set; }
         public DbSet<Enrollment> Enrollments { get; set; }
+        public DbSet<Assignment> Assignments { get; set; }
+
+        public DbSet<Submission> Submissions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -42,7 +45,7 @@ namespace SIMSWeb.Data.Context
              .HasMany(t => t.Courses)
              .WithOne(c => c.Teacher)
              .HasForeignKey(t => t.TeacherId)
-             .OnDelete(DeleteBehavior.NoAction); 
+             .OnDelete(DeleteBehavior.NoAction);
 
             // Many to many, Student & Course
             modelBuilder.Entity<Enrollment>()
@@ -52,13 +55,13 @@ namespace SIMSWeb.Data.Context
                 .HasOne(s => s.Student)
                 .WithMany(e => e.Enrollments)
                 .HasForeignKey(e => e.StudentId)
-                .OnDelete(DeleteBehavior.NoAction); 
+                .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<Enrollment>()
                 .HasOne(s => s.Course)
                 .WithMany(e => e.Enrollments)
                 .HasForeignKey(e => e.CourseId)
-                .OnDelete(DeleteBehavior.Cascade); 
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<User>()
                 .HasData(
@@ -79,7 +82,7 @@ namespace SIMSWeb.Data.Context
                         Email = "keya@gmail.com",
                         Password = "stud",
                         Role = "Student",
-                         CreatedAt = DateTime.Now,
+                        CreatedAt = DateTime.Now,
                     },
                     new User
                     {
@@ -110,6 +113,22 @@ namespace SIMSWeb.Data.Context
                     }
                   );
 
+            modelBuilder.Entity<Assignment>()
+                .HasOne(a => a.Course)
+                .WithMany(c => c.Assignments)
+                .HasForeignKey(a => a.CourseId);
+
+            modelBuilder.Entity<Submission>()
+                .HasOne(s => s.Assignment)
+                .WithMany(a => a.Submissions)
+                .HasForeignKey(s => s.AssignmentId);
+
+            modelBuilder.Entity<Submission>()
+                .HasOne(s => s.Student)
+                .WithMany(s => s.Submissions)
+                .HasForeignKey(s => s.StudentId)
+                .OnDelete(DeleteBehavior.NoAction);
+
             // Seed Students
             modelBuilder.Entity<Student>().HasData(
                 new Student { Id = 1, UserId = 2, EnrollmentDate = DateTime.Now },
@@ -118,7 +137,7 @@ namespace SIMSWeb.Data.Context
 
             // Seed Teachers
             modelBuilder.Entity<Teacher>().HasData(
-                new Teacher { Id = 1, UserId = 3,  Department = "Mathematics", HireDate = DateTime.Now },
+                new Teacher { Id = 1, UserId = 3, Department = "Mathematics", HireDate = DateTime.Now },
                 new Teacher { Id = 2, UserId = 4, Department = "Physics", HireDate = DateTime.Now }
             );
 
@@ -128,12 +147,63 @@ namespace SIMSWeb.Data.Context
                 new Course { Id = 2, Name = "Physics 101", TeacherId = 2, IsActive = true }
             );
 
+            modelBuilder.Entity<Assignment>().HasData(
+                new Assignment
+                {
+                    Id = 1,
+                    Title = "Algebra Homework",
+                    Description = "Solve all exercises in chapter 3",
+                    MaxScore = 25,
+                    DueDate = new DateTime(2025, 9, 1),
+                    CourseId = 1
+                },
+                new Assignment
+                {
+                    Id = 2,
+                    Title = "Lab Report",
+                    Description = "Complete the lab report for week 1",
+                    MaxScore = 50,
+                    DueDate = new DateTime(2025, 9, 5),
+                    CourseId = 11
+                }
+            );
+
+            // Seed Submissions (must have valid AssignmentId)
+            modelBuilder.Entity<Submission>().HasData(
+                new Submission
+                {
+                    Id = 1,
+                    StudentId = 1,
+                    Score = 95,
+                    SubmittedAt = new DateTime(2025, 8, 30),
+                    AssignmentId = 1,
+                    Feedback = "Well done"
+
+                },
+                new Submission
+                {
+                    Id = 2,
+                    StudentId = 2,
+                    Score = 88,
+                    SubmittedAt = new DateTime(2025, 9, 1),
+                    AssignmentId = 1
+                },
+                new Submission
+                {
+                    Id = 3,
+                    StudentId = 1,
+                    Score = 45,
+                    SubmittedAt = new DateTime(2025, 9, 4),
+                    AssignmentId = 2
+                }
+            );
+
 
             // Seed Many-to-Many Relationship (Enrollment)
             modelBuilder.Entity<Enrollment>().HasData(
-                new Enrollment { StudentId = 1, CourseId = 1, Term = 1, Marks = 70 },  
-                new Enrollment { StudentId = 1, CourseId = 2, Term = 1, Marks = 65 },  
-                new Enrollment { StudentId = 2, CourseId = 2, Term = 1, Marks = 50 }   
+                new Enrollment { StudentId = 1, CourseId = 1, Term = 1, Marks = 70 },
+                new Enrollment { StudentId = 1, CourseId = 2, Term = 1, Marks = 65 },
+                new Enrollment { StudentId = 2, CourseId = 2, Term = 1, Marks = 50 }
             );
         }
     }

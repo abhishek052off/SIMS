@@ -1,0 +1,68 @@
+﻿@using SIMSWeb.Model.ViewModels;
+
+@{
+    ViewData["title"] = "View Assignments";
+}
+
+@model List<AssignmentViewModel>;
+
+<div class="row col-12">
+    <div class="card mb-3">
+        <div class="card-header h5 fw-bold d-flex justify-content-between">
+            Assignment Details
+            @if (!User.IsInRole("Student"))
+            {
+                <a class="btn btn-outline-primary" asp-controller="Assignment"
+                   asp-action="AddAssignment" asp-route-courseId="@ViewBag.CourseId">
+                   Add Assignment
+               </a>
+            }
+        </div>
+        <div class="card-body">
+            @if (Model == null && Model.Count > 0)
+            {
+                <div class="text-center align-content-center" style="height:100px">
+                    <h6 class="text-muted">No assignments added for this course.</h6>
+                    @if (!User.IsInRole("Student"))
+                    {
+                        <a class="btn btn-outline-primary" asp-controller="Assignment"
+                            asp-action="Add Assignment" asp-route-id="ViewBag[CourseId]">
+                            Add Assignment
+                        </a>
+                    }
+                </div>
+
+            }
+            else
+            {
+                <table class="table table-striped table-bordered">
+                    <thead>
+                         <tr>
+                            <th>Title</th>
+                            <th>Description</th>
+                            <th>Due Date</th>
+                            <th>Maximum Score</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                       
+                        @foreach (var assignment in Model)
+                        {
+                            <tr>
+                                <td class="col-2">@assignment.Title</td>
+                                <td class="col-3">@assignment.Description</td>
+                                <td class="col-2">
+                                    @(assignment.DueDate.ToString("dd MMM, yyyy") ?? "No date available")
+                                </td>
+                                <td class="col-2">
+                                    @assignment.MaxScore
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            
+            }
+        </div>
+    </div>
+</div>

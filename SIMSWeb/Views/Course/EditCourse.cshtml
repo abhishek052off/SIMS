@@ -132,12 +132,18 @@
 
     <script type="text/javascript">
         $(document).ready(function () {
+            // Get the current URL
+            const currentUrl = window.location.href;
 
-            var isTeacherView = $('input[name="ModifyTeacher"]').val();
-            var isStudenEnrollView = $('input[name="EnrollStudents"]').val();
+            // Create a URLSearchParams object from the current URL
+            const urlParams = new URLSearchParams(window.location.search);
+
+            // Access query parameters by key
+            const isTeacherView = urlParams.get('modifyTeacher');
+            const isStudenEnrollView = urlParams.get('enrollStudents');
 
             const disableUpdateCTA = () => {
-                debugger;
+
                 if(isStudenEnrollView === "true")
                 {
                     var studentId = +$('select[name="StudentId"]').val();
@@ -152,7 +158,8 @@
             $('select[name="TeacherId"]').on("change", () => {
             // Select the input by name and get its value
                 var teacherId = +$('select[name="TeacherId"]').val();
-
+                debugger;
+                //Reset department if teacher is unassigned
                 if(isTeacherView === "true" && (teacherId === null || teacherId === -1)){
                     $('input[name="Department"]').val("");
                 }

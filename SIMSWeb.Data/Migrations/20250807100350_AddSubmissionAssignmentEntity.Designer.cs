@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SIMSWeb.Data.Context;
 
@@ -11,9 +12,10 @@ using SIMSWeb.Data.Context;
 namespace SIMSWeb.Data.Migrations
 {
     [DbContext(typeof(SIMSDBContext))]
-    partial class SIMSDBContextModelSnapshot : ModelSnapshot
+    [Migration("20250807100350_AddSubmissionAssignmentEntity")]
+    partial class AddSubmissionAssignmentEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -50,27 +52,7 @@ namespace SIMSWeb.Data.Migrations
 
                     b.HasIndex("CourseId");
 
-                    b.ToTable("Assignments");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CourseId = 1,
-                            Description = "Solve all exercises in chapter 3",
-                            DueDate = new DateTime(2025, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            MaxScore = 25,
-                            Title = "Algebra Homework"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CourseId = 11,
-                            Description = "Complete the lab report for week 1",
-                            DueDate = new DateTime(2025, 9, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            MaxScore = 50,
-                            Title = "Lab Report"
-                        });
+                    b.ToTable("Assignment");
                 });
 
             modelBuilder.Entity("SIMSWeb.Model.Models.Course", b =>
@@ -200,13 +182,13 @@ namespace SIMSWeb.Data.Migrations
                         new
                         {
                             Id = 1,
-                            EnrollmentDate = new DateTime(2025, 8, 8, 8, 4, 43, 180, DateTimeKind.Local).AddTicks(1465),
+                            EnrollmentDate = new DateTime(2025, 8, 7, 15, 33, 50, 290, DateTimeKind.Local).AddTicks(5249),
                             UserId = 2
                         },
                         new
                         {
                             Id = 2,
-                            EnrollmentDate = new DateTime(2025, 8, 8, 8, 4, 43, 180, DateTimeKind.Local).AddTicks(1476),
+                            EnrollmentDate = new DateTime(2025, 8, 7, 15, 33, 50, 290, DateTimeKind.Local).AddTicks(5252),
                             UserId = 3
                         });
                 });
@@ -240,36 +222,7 @@ namespace SIMSWeb.Data.Migrations
 
                     b.HasIndex("StudentId");
 
-                    b.ToTable("Submissions");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            AssignmentId = 1,
-                            Feedback = "Well done",
-                            Score = 95.0,
-                            StudentId = 1,
-                            SubmittedAt = new DateTime(2025, 8, 30, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = 2,
-                            AssignmentId = 1,
-                            Feedback = "",
-                            Score = 88.0,
-                            StudentId = 2,
-                            SubmittedAt = new DateTime(2025, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = 3,
-                            AssignmentId = 2,
-                            Feedback = "",
-                            Score = 45.0,
-                            StudentId = 1,
-                            SubmittedAt = new DateTime(2025, 9, 4, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        });
+                    b.ToTable("Submission");
                 });
 
             modelBuilder.Entity("SIMSWeb.Model.Models.Teacher", b =>
@@ -301,14 +254,14 @@ namespace SIMSWeb.Data.Migrations
                         {
                             Id = 1,
                             Department = "Mathematics",
-                            HireDate = new DateTime(2025, 8, 8, 8, 4, 43, 180, DateTimeKind.Local).AddTicks(7200),
+                            HireDate = new DateTime(2025, 8, 7, 15, 33, 50, 290, DateTimeKind.Local).AddTicks(5267),
                             UserId = 3
                         },
                         new
                         {
                             Id = 2,
                             Department = "Physics",
-                            HireDate = new DateTime(2025, 8, 8, 8, 4, 43, 180, DateTimeKind.Local).AddTicks(7203),
+                            HireDate = new DateTime(2025, 8, 7, 15, 33, 50, 290, DateTimeKind.Local).AddTicks(5268),
                             UserId = 4
                         });
                 });
@@ -348,7 +301,7 @@ namespace SIMSWeb.Data.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2025, 8, 8, 8, 4, 43, 179, DateTimeKind.Local).AddTicks(8017),
+                            CreatedAt = new DateTime(2025, 8, 7, 15, 33, 50, 290, DateTimeKind.Local).AddTicks(3512),
                             Email = "admin@gmail.com",
                             Name = "Admin",
                             Password = "admin",
@@ -357,7 +310,7 @@ namespace SIMSWeb.Data.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2025, 8, 8, 8, 4, 43, 179, DateTimeKind.Local).AddTicks(8028),
+                            CreatedAt = new DateTime(2025, 8, 7, 15, 33, 50, 290, DateTimeKind.Local).AddTicks(3525),
                             Email = "keya@gmail.com",
                             Name = "Keya",
                             Password = "stud",
@@ -366,7 +319,7 @@ namespace SIMSWeb.Data.Migrations
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2025, 8, 8, 8, 4, 43, 179, DateTimeKind.Local).AddTicks(8029),
+                            CreatedAt = new DateTime(2025, 8, 7, 15, 33, 50, 290, DateTimeKind.Local).AddTicks(3526),
                             Email = "tiya@gmail.com",
                             Name = "Tiya",
                             Password = "staff",
@@ -375,7 +328,7 @@ namespace SIMSWeb.Data.Migrations
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateTime(2025, 8, 8, 8, 4, 43, 179, DateTimeKind.Local).AddTicks(8030),
+                            CreatedAt = new DateTime(2025, 8, 7, 15, 33, 50, 290, DateTimeKind.Local).AddTicks(3527),
                             Email = "nav@gmail.com",
                             Name = "Naveen",
                             Password = "staff",
@@ -384,7 +337,7 @@ namespace SIMSWeb.Data.Migrations
                         new
                         {
                             Id = 5,
-                            CreatedAt = new DateTime(2025, 8, 8, 8, 4, 43, 179, DateTimeKind.Local).AddTicks(8030),
+                            CreatedAt = new DateTime(2025, 8, 7, 15, 33, 50, 290, DateTimeKind.Local).AddTicks(3528),
                             Email = "sid@gmail.com",
                             Name = "Sid",
                             Password = "stud",

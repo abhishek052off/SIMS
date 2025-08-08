@@ -75,6 +75,9 @@ builder.Services.AddScoped<ITeacherService, TeacherService>();
 builder.Services.AddScoped<ICourseRepository, CourseRepository>();
 builder.Services.AddScoped<ICourseService, CourseService>();
 
+builder.Services.AddScoped<IAssignmentRepository, AssignmentRepository>();
+builder.Services.AddScoped<IAssignmentService, AssignmentService>();
+
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 var app = builder.Build();

@@ -27,6 +27,9 @@ namespace SIMSWeb.Model.Profiles
 
             CreateMap<Enrollment, EnrollmentViewModel>();
             CreateMap<EnrollmentViewModel, Enrollment>();
+
+            CreateMap<Assignment, AssignmentViewModel>();
+            CreateMap<AssignmentViewModel, Assignment>();
         }
         
     }

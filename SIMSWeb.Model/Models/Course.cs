@@ -12,8 +12,10 @@ namespace SIMSWeb.Model.Models
         public string Name { get; set; }
         public bool IsActive { get; set; }
         public string? Description { get; set; } = string.Empty;
+        public bool? IsCompleted { get; set; } = false;
 
         public List<Enrollment>? Enrollments { get; set; }
+        public List<Assignment> Assignments { get; set; }
 
         public int? TeacherId { get; set; }
         public Teacher? Teacher { get; set; }

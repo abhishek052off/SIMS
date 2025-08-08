@@ -1,0 +1,56 @@
+﻿@using SIMSWeb.Model.ViewModels;
+
+@{
+    ViewData["title"] = "Add Assignments";
+}
+
+@model AssignmentViewModel;
+
+<form method="post" asp-action="EditCourse" asp-controller="Course">
+    <div class="p-3 pt-4 gap-2">
+        <div class="row">
+            <h2>Add Assignment</h2>
+            <hr />
+        </div>
+        <div asp-validation-summary="ModelOnly"></div>
+        <div class="mb-3">
+            <label>Course Name</label>
+            <input asp-for="@Model.CourseName" type="text" class="form-control"
+                   disabled />
+        </div>
+        <div class="mb-3">
+            <label>Assignment Title</label>
+            <input asp-for="@Model.Title" name="Title" type="text" class="form-control" />
+            <span asp-validation-for="@Model.Title" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label>Description</label>
+            <textarea asp-for="@Model.Description" rows="5" maxlength="250"
+                      name="Description" type="text" class="form-control"></textarea>
+            <input type="hidden" asp-for="@Model.Description" name="Description" />
+        </div>
+        <div class="mb-3">
+            <label>Maximum Score</label>
+            <input asp-for="@Model.MaxScore" name="MaxScore" type="text" class="form-control" />
+            <span asp-validation-for="@Model.MaxScore" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label>Completion Date</label>
+            <input asp-for="@Model.DueDate" name="DueDate" type="date" class="form-control" />
+            <span asp-validation-for="@Model.DueDate" class="text-danger"></span>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <button type="submit" class="btn btn-primary" asp-action="AddAssignment"
+                        asp-controller="Assignment" asp-route-courseId="@Model.CourseId">
+                    Add
+                </button>
+                <a asp-controller="Course" asp-action="ViewCourse" class="btn btn-outline-primary"
+                   asp-route-id="@Model.CourseId">
+                    Cancel
+                </a>
+
+            </div>
+        </div>
+    </div>
+</form>
