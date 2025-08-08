@@ -30,6 +30,9 @@ namespace SIMSWeb.Model.Profiles
 
             CreateMap<Assignment, AssignmentViewModel>();
             CreateMap<AssignmentViewModel, Assignment>();
+
+            CreateMap<Submission, SubmissionViewModel>();
+            CreateMap<SubmissionViewModel, Submission>();
         }
         
     }

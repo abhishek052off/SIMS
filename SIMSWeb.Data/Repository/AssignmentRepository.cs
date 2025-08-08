@@ -26,6 +26,16 @@ namespace SIMSWeb.Data.Repository
            await _dbContext.SaveChangesAsync();
         }
 
+        public async Task<Assignment> GetAssignmentById(int id)
+        {
+            var assignment = await _dbContext.Assignments
+                .Include(x => x.Course)
+                .Where(x => x.Id == id)
+                .FirstOrDefaultAsync();
+
+            return assignment;
+        }
+
         public async Task<List<Assignment>> GetAssignments(int courseId)
         {
             var assignments = await _dbContext.Assignments

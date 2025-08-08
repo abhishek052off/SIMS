@@ -2,12 +2,6 @@
 
 @model ViewCourseModel;
 
-<style>
-    .control-label {
-        width: 150px;
-    }
-</style>
-
 <!--Faculty details-->
 <div class="row col-12">
     <div class="card mb-3">
@@ -34,7 +28,7 @@
                 </div>
                 <div class="row g-3 align-items-center">
                     <div class="col-auto">
-                        <label class="col-form-label control-label card-body fw-bold">Department</label>
+                        <label class="col-form-label control-label card-body fw-bold">Department:</label>
                     </div>
                     <div class="col-auto">
                         @Model.Department
@@ -42,7 +36,7 @@
                 </div>
                 <div class="row g-3 align-items-center">
                     <div class="col-auto">
-                        <label class="col-form-label control-label card-body fw-bold">Date Joined</label>
+                        <label class="col-form-label control-label card-body fw-bold">Date Joined:</label>
                     </div>
                     <div class="col-auto">
                         @(Model?.TeacherHireDate?.ToString("dd MMM, yyyy") ?? "No date available")

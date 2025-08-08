@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace SIMSWeb.Business.IService
 {
-    public interface IAssignmentService
+    public interface ISubmissionService
     {
-        Task<List<Assignment>> GetAssignments(int courseId);
-        Task<Assignment> GetAssignmentById(int id);
-        Task AddAssignment(AssignmentViewModel assignment);
-        Task UpdateAssignment(Assignment assignment);
+        Task<List<Submission>> GetSubmissionByAssignmentId(int assignmentId);
+        Task<Submission> GetSubmissionById(int id);
+        Task AddSubmission(SubmissionViewModel submission);
+        Task UpdateSubmission(Submission submission);
         // Task DeleteAssignment(Assignment assignment);
     }
 }

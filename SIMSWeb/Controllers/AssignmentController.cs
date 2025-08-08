@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SIMSWeb.Business.IService;
+using SIMSWeb.Business.Service;
+using SIMSWeb.Business.ServiceDTO.Course;
 using SIMSWeb.Model.Models;
 using SIMSWeb.Model.ViewModels;
 using SIMSWeb.Models.Course;
@@ -31,6 +34,7 @@ namespace SIMSWeb.Controllers
 
             var assignmentsVM = assignments.Select(a => new AssignmentViewModel
             {
+                Id = a.Id,
                 CourseId = a.CourseId,
                 CourseName = a.Course.Name,
                 Title = a.Title,
@@ -72,5 +76,42 @@ namespace SIMSWeb.Controllers
             return RedirectToAction("ViewAssignments", new { courseId = assignmentRequest.CourseId });
 
         }
+
+        [Authorize(Policy = "AdminTeacherOnly")]
+        public async Task<ActionResult> EditAssignment(int id)
+        {
+            var assignmentView = new AssignmentViewModel();
+
+
+            var assignment = await _assignmentService.GetAssignmentById(id);
+            if (assignment == null)
+            {
+                return RedirectToAction("ViewAssignments", new {courseId = assignment.CourseId});
+            }
+
+            assignmentView = _mapper.Map<AssignmentViewModel>(assignment);           
+
+            return View(assignmentView);
+        }
+
+        [HttpPost]
+        [Authorize(Policy = "AdminTeacherOnly")]
+        public async Task<ActionResult> EditAssignment(int courseId, AssignmentViewModel assignmentRequest)
+        {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("ViewAssignments", new { courseId = courseId });
+            }
+
+            var assignmentView = _mapper.Map<Assignment>(assignmentRequest);
+            assignmentView.CourseId = courseId;
+
+            await _assignmentService.UpdateAssignment(assignmentView);
+
+            TempData["success"] = "Assignment updated successfully";
+            return RedirectToAction("ViewAssignments", new { courseId = courseId });
+        }
+
+
     }
 }

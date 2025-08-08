@@ -33,6 +33,11 @@ namespace SIMSWeb.Business.Service
            await _assignmentRepository.AddAssignment(_assignment);
         }
 
+        public async Task<Assignment> GetAssignmentById(int id)
+        {
+            return await _assignmentRepository.GetAssignmentById(id);
+        }
+
         public async Task<List<Assignment>> GetAssignments(int courseId)
         {
             return await _assignmentRepository.GetAssignments(courseId);

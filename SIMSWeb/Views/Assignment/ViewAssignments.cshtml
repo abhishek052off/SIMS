@@ -42,6 +42,8 @@
                             <th>Description</th>
                             <th>Due Date</th>
                             <th>Maximum Score</th>
+                            <th>Submission</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -57,12 +59,33 @@
                                 <td class="col-2">
                                     @assignment.MaxScore
                                 </td>
+                                <td>
+                                    <a asp-action="ViewSubmission" asp-controller="Submission" 
+                                    title="View Submission details" class="btn btn-sm btn-outline-primary">
+                                        View Submission
+                                    </a>
+                                </td>
+                                <td>
+                                    <span>
+                                        <a asp-action="EditAssignment" asp-controller="Assignment" asp-route-id="@assignment.Id" 
+                                        asp-route-courseId="@ViewBag.CourseId" class="btn btn-sm rounded-5 btn-primary" 
+                                        title="Edit Assignment">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                    </span>
+                                </td>
                             </tr>
                         }
                     </tbody>
                 </table>
             
             }
+        </div>
+        <div class="card-footer">
+            <a asp-controller="Course" asp-action="ViewCourse" class="btn btn-primary"
+                   asp-route-id="@ViewBag.CourseId">
+                   Back
+            </a>
         </div>
     </div>
 </div>
