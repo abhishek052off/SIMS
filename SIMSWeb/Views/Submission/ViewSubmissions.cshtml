@@ -1,0 +1,85 @@
+﻿@using SIMSWeb.Model.ViewModels
+@{
+    ViewData["Title"] = "View Submission";
+
+}
+
+@model List<SubmissionViewModel>;
+
+<div class="row col-12">
+    <div class="card mb-3">
+        <div class="card-header h5 fw-bold d-flex justify-content-between">
+            Submission Details
+            @if (!User.IsInRole("Student"))
+            {
+                <a class="btn btn-outline-primary" asp-controller="Submission"
+                   asp-action="AddSubmission" asp-route-assignmentId="@ViewBag.AssignmentId">
+                   Add Submission
+               </a>
+            }
+        </div>
+        <div class="card-body">
+            @if (Model == null && Model.Count > 0)
+            {
+                <div class="text-center align-content-center" style="height:100px">
+                    <h6 class="text-muted">No submission added for this assignment.</h6>
+                    @if (!User.IsInRole("Student"))
+                    {
+                        <a class="btn btn-outline-primary" asp-controller="Submission"
+                        asp-action="AddSubmission" asp-route-assignmentId="@ViewBag.AssignmentId">
+                            Add Submission
+                        </a>
+                    }
+                </div>
+
+            }
+            else
+            {
+                <table class="table table-striped table-bordered">
+                    <thead>
+                         <tr>
+                            <th>Student Name</th>
+                            <th>Score</th>
+                            <th>Feedback</th>
+                            <th>Submitted At</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                       
+                        @foreach (var submission in Model)
+                        {
+                            <tr>
+                                <td class="col-2">@submission.StudentName</td>
+                                <td class="col-3">@submission.Score</td>
+                                 <td class="col-2">
+                                    @submission.Feedback
+                                </td>
+                                <td class="col-2">
+                                    @(submission.SubmittedAt.ToString("dd MMM, yyyy") ?? "No date available")
+                                </td>
+                                <td>
+                                    <span>
+                                        <a asp-action="EditSubmission" asp-controller="submission" asp-route-id="@submission.Id"
+                                        asp-route-assignmentId="@submission.AssignmentId" 
+                                        class="btn btn-sm rounded-5 btn-primary" 
+                                        title="Edit Submission">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                    </span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            
+            }
+        </div>
+        <div class="card-footer">
+            <a asp-controller="Assignment" asp-action="ViewAssignment" class="btn btn-primary"
+                   asp-route-courseId="@ViewBag.CourseId">
+                   Back
+            </a>
+        </div>
+    </div>
+</div>

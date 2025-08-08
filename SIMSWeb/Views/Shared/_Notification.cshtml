@@ -1,0 +1,21 @@
+﻿@if (TempData["success"] != null)
+{
+    // Traditional way of showing notification
+    @* <h5 class="text-success">@TempData["success"]</h5> *@
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+
+    <script type="text/javascript">
+        toastr.success("@TempData["success"]");
+    </script>
+}
+else if (TempData["error"] != null)
+{
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+
+    <script type="text/javascript">
+        toastr.error("@TempData["error"]");
+    </script>
+}

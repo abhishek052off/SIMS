@@ -1,4 +1,5 @@
-﻿using SIMSWeb.Model.Models;
+﻿using SIMSWeb.Business.ServiceDTO.Student;
+using SIMSWeb.Model.Models;
 using SIMSWeb.Model.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ namespace SIMSWeb.Business.IService
     public interface IStudentService
     {
         Task<List<Student>> GetStudents(int courseId);
+        Task<List<StudentSelect>> GetStudentsListByCourseId(int courseId);
         Task AddStudent(StudentViewModel student);
         Task UpdateStudent(Student student);
         Task DeleteStudent(Student student);

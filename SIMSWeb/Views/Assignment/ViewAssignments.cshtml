@@ -26,7 +26,7 @@
                     @if (!User.IsInRole("Student"))
                     {
                         <a class="btn btn-outline-primary" asp-controller="Assignment"
-                            asp-action="Add Assignment" asp-route-id="ViewBag[CourseId]">
+                            asp-action="Add Assignment" asp-route-id="@ViewBag.CourseId">
                             Add Assignment
                         </a>
                     }
@@ -60,8 +60,10 @@
                                     @assignment.MaxScore
                                 </td>
                                 <td>
-                                    <a asp-action="ViewSubmission" asp-controller="Submission" 
-                                    title="View Submission details" class="btn btn-sm btn-outline-primary">
+                                    <a asp-action="ViewSubmissions" asp-controller="Submission" 
+                                    asp-route-assignmentId="@assignment.Id" 
+                                    asp-route-courseId="@ViewBag.CourseId" title="View Submission details" 
+                                    class="btn btn-sm btn-outline-primary">
                                         View Submission
                                     </a>
                                 </td>

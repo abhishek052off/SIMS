@@ -15,8 +15,10 @@ namespace SIMSWeb.Model.ViewModels
 
         public int StudentId { get; set; }
 
+        public string? StudentName { get; set; } = String.Empty;
+
         public double Score { get; set; }
-        public string? Feedback { get; set; } = string.Empty;
+        public string? Feedback { get; set; } = String.Empty;
         public DateTime SubmittedAt { get; set; }
     }
 }

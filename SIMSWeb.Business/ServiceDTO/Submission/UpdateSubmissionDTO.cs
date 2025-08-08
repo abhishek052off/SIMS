@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace SIMSWeb.Business.ServiceDTO.Submission
 {
-    public class UpdateSubmission
+    public class UpdateSubmissionDTO
     {
-        public SubmissionViewModel Submission { get; set; }
+        public List<SubmissionViewModel> Submission { get; set; }
         public List<StudentSelect>? StudentList { get; set; }
     }
 }

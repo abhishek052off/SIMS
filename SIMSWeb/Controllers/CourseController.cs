@@ -133,24 +133,6 @@ namespace SIMSWeb.Controllers
             return teacherList;
         }
 
-        public async Task<List<StudentSelect>> GetStudentsList(int courseId)
-        {
-            var students = await _studentService.GetStudents(courseId);
-            var studentList = students.Select(u => new StudentSelect
-            {
-                Id = u.Id,
-                Name = u.User.Name,
-            }).ToList();
-
-            studentList.Insert(0, new StudentSelect
-            {
-                Id = -1,
-                Name = "Select Student"
-            });
-
-            return studentList;
-        }
-
         [Authorize(Policy = "AdminOnly")]
         public async Task<ActionResult> AddCourses()
         {
@@ -202,7 +184,7 @@ namespace SIMSWeb.Controllers
             }
             else
             {
-                var studentList = await GetStudentsList(id);
+                var studentList = await _studentService.GetStudentsListByCourseId(id);
                 courseVM.StudentList = studentList;
             }
 

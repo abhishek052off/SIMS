@@ -13,19 +13,16 @@ namespace SIMSWeb.Controllers
     public class AssignmentController : Controller
     {
         private readonly IAssignmentService _assignmentService;
-        private readonly ICourseService _courseService;
+        private readonly ICourseService _courseService;        
         private readonly IMapper _mapper;
 
-        public AssignmentController(IAssignmentService assignmentService, ICourseService courseService,
+        public AssignmentController(IAssignmentService assignmentService, 
+            ICourseService courseService, IStudentService studentService,
             IMapper mapper)
         {
             _assignmentService = assignmentService;
             _courseService = courseService;
             _mapper = mapper;
-        }
-        public IActionResult Index()
-        {
-            return View();
         }
 
         public async Task<ActionResult> ViewAssignments(int CourseId)
