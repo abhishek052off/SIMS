@@ -17,5 +17,7 @@ namespace SIMSWeb.Data.IRepository
         Task<int> GetCourseCount(int teacherFilter, string searchText);
         Task<Course> GetCourseDetailsById(int id);
         Task<List<Course>> GetCoursesByUserId(int userId, int teacherFilter, string courseSearchText, int skip, int pageSize);
+        Task<int> GetActiveCoursesCount();
+        Task<double> AverageClassSize();
     }
 }

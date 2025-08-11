@@ -1,4 +1,6 @@
-﻿using SIMSWeb.Business.IService;
+﻿using AutoMapper;
+using SIMSWeb.Business.IService;
+using SIMSWeb.Business.ServiceDTO.SubmissionDTO;
 using SIMSWeb.Data.IRepository;
 using SIMSWeb.Data.Repository;
 using SIMSWeb.Model.Models;
@@ -14,10 +16,12 @@ namespace SIMSWeb.Business.Service
     public class SubmissionService : ISubmissionService
     {
         private readonly ISubmissionRepository _submissionRepository;
+        private readonly IMapper _mapper;
 
-        public SubmissionService(ISubmissionRepository submissionRepository)
+        public SubmissionService(ISubmissionRepository submissionRepository, IMapper mapper)
         {
             _submissionRepository = submissionRepository;
+            _mapper = mapper;
         }
 
         public async Task AddSubmission(SubmissionViewModel submission)
@@ -44,8 +48,9 @@ namespace SIMSWeb.Business.Service
             return await _submissionRepository.GetSubmissionById(id);
         }
 
-        public async Task UpdateSubmission(Submission submission)
+        public async Task UpdateSubmission(SubmissionViewModel submissionInfo)
         {
+            var submission = _mapper.Map<Submission>(submissionInfo);
             await _submissionRepository.UpdateSubmission(submission);
         }
     }

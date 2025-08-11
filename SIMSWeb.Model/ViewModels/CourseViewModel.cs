@@ -15,12 +15,12 @@ namespace SIMSWeb.Model.ViewModels
         public int? TeacherId { get; set; }
 
         public bool ModifyTeacher { get; set; } = false;
-        public string? Department { get; set; } = String.Empty;
+        public string? Department { get; set; } = string.Empty;
 
         public bool EnrollStudents { get; set; } = false;
         public int? StudentId { get; set; }
         public int? Term { get; set; } = 1;
         public double? Marks { get; set; }
-        public string? Comments { get; set; } = String.Empty;
+        public string? Comments { get; set; } = string.Empty;
     }
 }

@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
 using SIMSWeb.Business.IService;
-using SIMSWeb.Business.ServiceDTO.Student;
+using SIMSWeb.Business.ServiceDTO.StudentDTO;
 using SIMSWeb.Data.IRepository;
+using SIMSWeb.Data.Repository;
 using SIMSWeb.Model.Models;
 using SIMSWeb.Model.ViewModels;
 using System;
@@ -34,14 +35,20 @@ namespace SIMSWeb.Business.Service
             await _studentRepository.DeleteStudent(student);
         }
 
-        public async Task<List<Student>> GetStudents(int courseId)
+        public async Task<List<StudentSelect>> GetStudents(int courseId)
         {
-            return await _studentRepository.GetStudents(courseId);
+            var students = await _studentRepository.GetStudents(courseId);
+            return GetStudentSelectList(students);
         }
 
-        public async Task<List<StudentSelect>> GetStudentsListByCourseId(int courseId)
+        public async Task<List<StudentSelect>> GetEnrolledStudentsByCourseId(int courseId)
         {
-            var students = await GetStudents(courseId);
+            var students = await _studentRepository.GetEnrolledStudentsByCourseId(courseId);
+            return GetStudentSelectList(students);
+        }
+
+        public List<StudentSelect> GetStudentSelectList(List<Student> students)
+        {
             var studentList = students.Select(u => new StudentSelect
             {
                 Id = u.Id,
@@ -68,6 +75,9 @@ namespace SIMSWeb.Business.Service
             await _studentRepository.EnrollStudents(enrolledData);
         }
 
-
+        public Task<Student> GetStudentById(int id)
+        {
+            return _studentRepository.GetStudentById(id);
+        }
     }
 }

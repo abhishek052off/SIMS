@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\SIMSWeb.ConstantsAndUtilities\SIMSWeb.ConstantsAndUtilities.csproj" />
     <ProjectReference Include="..\SIMSWeb.Data\SIMSWeb.Data.csproj" />
     <ProjectReference Include="..\SIMSWeb.Model\SIMSWeb.Model.csproj" />

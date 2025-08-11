@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using SIMSWeb.Business.IService;
-using SIMSWeb.Business.ServiceDTO.Course;
+using SIMSWeb.Business.ServiceDTO.CourseDTO;
 using SIMSWeb.Data.IRepository;
 using SIMSWeb.Data.Repository;
 using SIMSWeb.Model.Models;
@@ -76,6 +76,16 @@ namespace SIMSWeb.Business.Service
         {
             return await _courseRepository.GetCoursesByUserId(userId, teacherFilter,
                 courseSearchText, skip, pageSize);
+        }
+
+        public async Task<int> GetActiveCoursesCount()
+        {
+            return await _courseRepository.GetActiveCoursesCount();
+        }
+
+        public async Task<double> AverageClassSize()
+        {
+            return await _courseRepository.AverageClassSize();
         }
     }
 }

@@ -43,7 +43,7 @@ namespace SIMSWeb.Data.Repository
                 .Include(x => x.Student)
                     .ThenInclude(s => s.User)
                 .Include(x => x.Assignment)
-                .Where(x => x.AssignmentId == id)
+                .Where(x => x.Id == id)
                 .FirstOrDefaultAsync();
 
             return submission;

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SIMSWeb.Business.IService;
 using SIMSWeb.Business.Service;
+using SIMSWeb.Business.ServiceDTO.ServiceProfile;
 using SIMSWeb.CustomMiddleware;
 using SIMSWeb.Data.Context;
 using SIMSWeb.Data.IRepository;
@@ -82,6 +83,7 @@ builder.Services.AddScoped<ISubmissionRepository, SubmissionRepository>();
 builder.Services.AddScoped<ISubmissionService, SubmissionService>();
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));
+builder.Services.AddAutoMapper(typeof(ServiceMappingProfile));
 
 var app = builder.Build();
 

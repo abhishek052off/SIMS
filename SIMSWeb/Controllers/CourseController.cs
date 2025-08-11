@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SIMSWeb.Business.IService;
 using SIMSWeb.Business.Service;
-using SIMSWeb.Business.ServiceDTO.Course;
-using SIMSWeb.Business.ServiceDTO.Student;
+using SIMSWeb.Business.ServiceDTO.CourseDTO;
+using SIMSWeb.Business.ServiceDTO.StudentDTO;
 using SIMSWeb.Business.ServiceDTO.Teacher;
 using SIMSWeb.Model.Models;
 using SIMSWeb.Model.ViewModels;
@@ -55,7 +55,7 @@ namespace SIMSWeb.Controllers
 
 
             ViewBag.TeacherId = TeacherFilter == 0 ? -1 : TeacherFilter;
-            ViewBag.CourseSearchText = CourseSearchText ?? String.Empty;
+            ViewBag.CourseSearchText = CourseSearchText ?? string.Empty;
 
             if (User.IsInRole("Teacher") || User.IsInRole("Student"))
             {
@@ -184,7 +184,7 @@ namespace SIMSWeb.Controllers
             }
             else
             {
-                var studentList = await _studentService.GetStudentsListByCourseId(id);
+                var studentList = await _studentService.GetStudents(id);
                 courseVM.StudentList = studentList;
             }
 

@@ -1,36 +1,118 @@
 ﻿@using SIMSWeb.Model.Models
+@using SIMSWeb.Model.ViewModels
 
-@model User
 @{
     ViewData["Title"] = "My Profile";
 }
 
-<div class="card mb-3" style="max-width: 20rem;">
-    <div class="card-header h5 fw-bold">My Profile</div>
-    <div class="card-body">
-        <div class="row g-3 align-items-center">
-            <div class="col-auto">
-                <label class="col-form-label card-body fw-bold">Name:</label>
-            </div>
-            <div class="col-auto">
-                @Model.Name 
-            </div>
-        </div>
-        <div class="row g-3 align-items-center">
-            <div class="col-auto">
-                <label class="col-form-label card-body fw-bold">Email:</label>
-            </div>
-            <div class="col-auto">
-                @Model.Email
+@model AdminProfile;
+
+<div class="container">
+    <div class="row g-3">
+        <div class="col-md-3">
+            <div class="card text-dark bg-info-subtle mb-3 border-info">
+                <div class="card-body">
+                    <h5 class="card-title">Total Users</h5>
+                    <p class="card-text">@Model.Status.TotalUsers</p>
+                </div>
             </div>
         </div>
-        <div class="row g-3 align-items-center">
-            <div class="col-auto">
-                <label class="col-form-label card-body fw-bold">Designation:</label>
+        <div class="col-md-3">
+            <div class="card text-dark bg-success-subtle mb-3 border-success">
+                <div class="card-body">
+                    <h5 class="card-title">Active Courses</h5>
+                    <p class="card-text">@Model.Status.ActiveCourses</p>
+                </div>
             </div>
-            <div class="col-auto">
-                @Model.Role
+        </div>
+        <div class="col-md-3">
+            <div class="card text-dark bg-info-subtle mb-3 border-info">
+                <div class="card-body">
+                    <h5>Avg Class Size</h5>
+                    <p class="card-text">@Model.Status.AvgClassSizePerCourse</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-header h5 fw-bold">Personal Details</div>
+        <div class="card-body">
+            <div class="row">
+                <div class="d-inline-flex g-1 align-items-center">
+                    <div class="col-auto">
+                        <label class="col-form-label card-body fw-bold">Name:</label>
+                    </div>
+                    <div class="col-auto">
+                        @Model.User.Name
+                    </div>
+                </div>
+                <div class="d-inline-flex g-1 align-items-center">
+                    <div class="col-auto">
+                        <label class="col-form-label card-body fw-bold">Email:</label>
+                    </div>
+                    <div class="col-auto">
+                        @Model.User.Email
+                    </div>
+                </div>
+                <div class="d-inline-flex g-1 align-items-center">
+                    <div class="col-auto">
+                        <label class="col-form-label card-body fw-bold">Designation:</label>
+                    </div>
+                    <div class="col-auto">
+                        @Model.User.Role
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-header h5 fw-bold">Recent Enrollments</div>
+        <div class="card-body">
+            <div class="row">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Course</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Alice</td>
+                            <td>Mathematics</td>
+                            <td>2025-08-01</td>
+                        </tr>
+                        <tr>
+                            <td>Bob</td>
+                            <td>Physics</td>
+                            <td>2025-08-03</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-header h5 fw-bold">Pending Approvals</div>
+        <div class="card-body">
+            <div class="row">
+                <ul class="list-group mb-4">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Course: Biology 101
+                        <span class="badge bg-warning">Pending</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Course: Chemistry Lab
+                        <span class="badge bg-warning">Pending</span>
+                    </li>
+                </ul>
+
             </div>
         </div>
     </div>
 </div>
+

@@ -1,4 +1,4 @@
-﻿using SIMSWeb.Business.ServiceDTO.Course;
+﻿using SIMSWeb.Business.ServiceDTO.CourseDTO;
 using SIMSWeb.Model.Models;
 using SIMSWeb.Model.ViewModels;
 using System;
@@ -19,6 +19,7 @@ namespace SIMSWeb.Business.IService
         Task<Course> GetCourseById(int id);
         Task<Course> GetCourseDetailsById(int id);
         Task<int> GetCourseCount(int teacherFilter, string searchText);
-
+        Task<int> GetActiveCoursesCount();
+        Task<double> AverageClassSize();
     }
 }

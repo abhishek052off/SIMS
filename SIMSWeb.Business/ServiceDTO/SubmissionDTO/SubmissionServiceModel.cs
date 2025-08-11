@@ -1,23 +1,19 @@
-﻿using SIMSWeb.Model.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SIMSWeb.Model.Models;
 
-namespace SIMSWeb.Model.ViewModels
+namespace SIMSWeb.Business.ServiceDTO.SubmissionDTO
 {
-    public class SubmissionViewModel
+    public class SubmissionServiceModel
     {
         public int Id { get; set; }
 
         public int AssignmentId { get; set; }
 
-        public string? AssignmentName { get; set; }
-
         public int StudentId { get; set; }
-
-        public string? StudentName { get; set; } = string.Empty;
 
         public double Score { get; set; }
         public string? Feedback { get; set; } = string.Empty;

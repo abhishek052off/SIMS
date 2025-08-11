@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SIMSWeb.Business.ServiceDTO.Student
+namespace SIMSWeb.Business.ServiceDTO.StudentDTO
 {
     public class StudentSelect
     {

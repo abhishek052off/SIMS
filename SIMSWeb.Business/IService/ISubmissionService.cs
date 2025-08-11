@@ -1,4 +1,5 @@
-﻿using SIMSWeb.Model.Models;
+﻿using SIMSWeb.Business.ServiceDTO.SubmissionDTO;
+using SIMSWeb.Model.Models;
 using SIMSWeb.Model.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,7 @@ namespace SIMSWeb.Business.IService
         Task<List<Submission>> GetSubmissionByAssignmentId(int assignmentId);
         Task<Submission> GetSubmissionById(int id);
         Task AddSubmission(SubmissionViewModel submission);
-        Task UpdateSubmission(Submission submission);
+        Task UpdateSubmission(SubmissionViewModel submission);
         // Task DeleteAssignment(Assignment assignment);
     }
 }

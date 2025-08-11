@@ -52,6 +52,20 @@ namespace SIMSWeb.Data.Repository
             return students;
         }
 
+        /**
+         * Get students which are enrolled to the course.
+         */
+        public async Task<List<Student>> GetEnrolledStudentsByCourseId(int courseId)
+        {
+            var students = await _dbContext.Students
+                .Include(s => s.User)
+                .Include(s => s.Enrollments)
+                .Where(s => s.User.Role == "Student" &&
+                    s.Enrollments.Any(e => e.CourseId == courseId))
+                .ToListAsync();
+            return students;
+        }
+
         public async Task UpdateStudent(Student student)
         {
             _dbContext.Students.Update(student);

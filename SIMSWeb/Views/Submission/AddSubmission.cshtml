@@ -1,0 +1,59 @@
+﻿@using SIMSWeb.Business.ServiceDTO.SubmissionDTO
+@using SIMSWeb.Model.ViewModels
+@{
+    ViewData["Title"] = "Add Submission";
+}
+
+@model UpdateSubmissionDTO;
+
+<form method="post" asp-action="EditCourse" asp-controller="Course">
+    <div class="p-3 pt-4 gap-2">
+        <div class="row">
+            <h2>@ViewData["Title"]</h2>
+            <hr />
+        </div>
+        <div asp-validation-summary="ModelOnly"></div>
+        <div class="mb-3">
+            <label>Assignment Title</label>
+            <input asp-for="@Model.Submission.AssignmentName" type="text" class="form-control"
+                   disabled />
+        </div>
+        <div class="mb-3">
+            <label>Student Name</label>
+            <select asp-for="@Model.Submission.StudentId" asp-items="@(new SelectList(Model.StudentList, "Id", "Name"))"
+                    name="StudentId" class="form-control">
+            </select>
+        </div>
+        <div class="mb-3">
+            <label>Score obtained</label>
+            <input asp-for="@Model.Submission.Score" name="Score" type="number" class="form-control" />
+            <span asp-validation-for="@Model.Submission.Score" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label>Feedback</label>
+            <textarea asp-for="@Model.Submission.Feedback" rows="5" maxlength="250"
+                      name="Feedback" type="text" class="form-control"></textarea>
+            <input type="hidden" asp-for="@Model.Submission.Feedback" name="Feedback" />
+        </div>       
+        <div class="mb-3">
+            <label>Submitted on</label>
+            <input asp-for="@Model.Submission.SubmittedAt" name="SubmittedAt" type="date" class="form-control" />
+            <span asp-validation-for="@Model.Submission.SubmittedAt" class="text-danger"></span>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <button type="submit" class="btn btn-primary" asp-action="AddSubmission"
+                        asp-controller="Submission" asp-route-courseId="@ViewBag.CourseId"
+                        asp-route-assignmentId="@ViewBag.AssignmentId">
+                    Add
+                </button>
+                <a asp-controller="Submission" asp-action="ViewSubmissions" class="btn btn-outline-primary"
+                   asp-route-courseId="@ViewBag.CourseId" asp-route-assignmentId="@ViewBag.AssignmentId">
+                    Cancel
+                </a>
+
+            </div>
+        </div>
+    </div>
+</form>
+

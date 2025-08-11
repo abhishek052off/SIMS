@@ -1,4 +1,4 @@
-﻿using SIMSWeb.Business.ServiceDTO.Student;
+﻿using SIMSWeb.Business.ServiceDTO.StudentDTO;
 using SIMSWeb.Business.ServiceDTO.Teacher;
 using SIMSWeb.Model.ViewModels;
 using System;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SIMSWeb.Business.ServiceDTO.Course
+namespace SIMSWeb.Business.ServiceDTO.CourseDTO
 {
 
     public class UpdateCourseVM

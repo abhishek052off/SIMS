@@ -123,7 +123,7 @@ namespace SIMSWeb.Data.Repository
                 .Include(c => c.Assignments)
                 .Include(c => c.Enrollments)
                     .ThenInclude(e => e.Student)
-                    .ThenInclude(s => s.User)                
+                    .ThenInclude(s => s.User)
                  .Where(c => c.Id == id)
                  .FirstOrDefaultAsync();
 
@@ -166,6 +166,28 @@ namespace SIMSWeb.Data.Repository
 
             var courseList = await courses.ToListAsync();
             return courseList;
+        }
+
+        public async Task<int> GetActiveCoursesCount()
+        {
+            var courses = _context.Courses
+                .Where(c => c.IsActive);
+
+            return await courses.CountAsync();
+        }
+
+        public async Task<double> AverageClassSize()
+        {
+            var courseClassSizes = await _context.Enrollments
+                .GroupBy(e => e.CourseId) 
+                .Select(g => g.Count())
+                .ToListAsync();
+
+            double averageClassSize = courseClassSizes.Any()
+                ? courseClassSizes.Average()
+                : 0;
+
+            return averageClassSize;
         }
     }
 }

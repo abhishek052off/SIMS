@@ -42,6 +42,8 @@ namespace SIMSWeb.Controllers
             // Get the total number of records
             var totalRecords = await _userService.GetUserCount(UserRole, SearchText);
 
+            ViewBag.UserSearchText = SearchText ?? string.Empty;
+
             var users = await _userService.GetUsers(UserRole, SearchText, skip, PageSize);
             manageUsersVM.Users = users.Select(u => new ManageUsersModel
             {
@@ -69,9 +71,7 @@ namespace SIMSWeb.Controllers
                     Text = UsersConstants.STUDENT_ROLE,
                     Value = UsersConstants.STUDENT_ROLE
                 }
-            }, "Value", "Text", UserRole);
-
-            ViewBag.UserSearchText = SearchText ?? String.Empty;
+            }, "Value", "Text", UserRole);            
 
             manageUsersVM.Paginations = new PaginatedResult<ManageUsersModel>
             {
