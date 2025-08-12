@@ -23,7 +23,12 @@ namespace SIMSWeb.Controllers
         {
             if (User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("Profile", "Home");
+                if (User.IsInRole("Admin"))
+                {
+                    return RedirectToAction("Profile", "Home");
+                }
+
+                return RedirectToAction("TeacherProfile", "Home");
             }
             return View();
         }

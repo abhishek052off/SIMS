@@ -34,39 +34,9 @@
             </div>
         </div>
     </div>
-
-    <div class="card mb-3">
-        <div class="card-header h5 fw-bold">Personal Details</div>
-        <div class="card-body">
-            <div class="row">
-                <div class="d-inline-flex g-1 align-items-center">
-                    <div class="col-auto">
-                        <label class="col-form-label card-body fw-bold">Name:</label>
-                    </div>
-                    <div class="col-auto">
-                        @Model.User.Name
-                    </div>
-                </div>
-                <div class="d-inline-flex g-1 align-items-center">
-                    <div class="col-auto">
-                        <label class="col-form-label card-body fw-bold">Email:</label>
-                    </div>
-                    <div class="col-auto">
-                        @Model.User.Email
-                    </div>
-                </div>
-                <div class="d-inline-flex g-1 align-items-center">
-                    <div class="col-auto">
-                        <label class="col-form-label card-body fw-bold">Designation:</label>
-                    </div>
-                    <div class="col-auto">
-                        @Model.User.Role
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
+    <!-- #Personal details -->
+    <partial name="_PersonalDetailsProfilePartial" model="@Model.User" />
+    <!-- #endregion -->
     <div class="card mb-3">
         <div class="card-header h5 fw-bold">Recent Enrollments</div>
         <div class="card-body">
@@ -80,16 +50,14 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>Alice</td>
-                            <td>Mathematics</td>
-                            <td>2025-08-01</td>
-                        </tr>
-                        <tr>
-                            <td>Bob</td>
-                            <td>Physics</td>
-                            <td>2025-08-03</td>
-                        </tr>
+                        @foreach (var enrollment in Model.RecentEnrollments)
+                        {
+                            <tr>
+                                <td>@enrollment.Name</td>
+                                <td>@enrollment.CourseName</td>
+                                <td>@enrollment.EnrollmentDate.ToString("dd MMM, yyyy")</td>
+                            </tr>
+                        }
                     </tbody>
                 </table>
             </div>
@@ -97,20 +65,30 @@
     </div>
 
     <div class="card mb-3">
-        <div class="card-header h5 fw-bold">Pending Approvals</div>
+        <div class="card-header h5 fw-bold">Pending Assignments</div>
         <div class="card-body">
             <div class="row">
-                <ul class="list-group mb-4">
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        Course: Biology 101
-                        <span class="badge bg-warning">Pending</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        Course: Chemistry Lab
-                        <span class="badge bg-warning">Pending</span>
-                    </li>
-                </ul>
+                @if (Model.PendingAssignments.Count > 0)
+                {
+                    <ul class="list-group mb-4">
+                        @foreach (var assignment in Model.PendingAssignments)
+                        {
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Course: @assignment.CourseName
+                                <span class="badge bg-warning">Due in 7 days</span>
+                            </li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    var noData = new NoDataViewModel
+                    {
+                        message = "All caught up"
+                    };
 
+                    <partial name="_NoDataPartial" model="@noData" />
+                }
             </div>
         </div>
     </div>

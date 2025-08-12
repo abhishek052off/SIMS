@@ -47,6 +47,12 @@ namespace SIMSWeb.Business.Service
             return GetStudentSelectList(students);
         }
 
+        public async Task<List<Enrollment>> GetRecentEnrolledStudents()
+        {
+            var enrollments = await _studentRepository.GetRecentEnrolledStudents();
+            return enrollments;
+        }
+
         public List<StudentSelect> GetStudentSelectList(List<Student> students)
         {
             var studentList = students.Select(u => new StudentSelect
@@ -75,9 +81,14 @@ namespace SIMSWeb.Business.Service
             await _studentRepository.EnrollStudents(enrolledData);
         }
 
-        public Task<Student> GetStudentById(int id)
+        public async Task<Student> GetStudentById(int id)
         {
-            return _studentRepository.GetStudentById(id);
+            return await _studentRepository.GetStudentById(id);
+        }
+
+        public async Task<List<Enrollment>> GetStudentEnrolledByUserId(int teacherId)
+        {
+            return await _studentRepository.GetStudentEnrolledByUserId(teacherId);
         }
     }
 }

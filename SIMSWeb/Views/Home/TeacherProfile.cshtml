@@ -1,3 +1,145 @@
-﻿@{
+﻿@using SIMSWeb.Model.Models
+@using SIMSWeb.Model.ViewModels
+
+@{
     ViewData["Title"] = "My Profile";
 }
+
+@model TeacherProfile;
+
+<div class="container">
+    <div class="row g-3">
+        <div class="col-md-3">
+            <div class="card text-dark bg-success-subtle mb-3 border-success">
+                <div class="card-body">
+                    <h5 class="card-title">Active Teaching Courses</h5>
+                    <p class="card-text">@(Model.TeacherProfileMetrics?.ActiveCourses ?? 0)</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-dark bg-info-subtle mb-3 border-info">
+                <div class="card-body">
+                    <h5 class="card-title">Total Students Enrolled</h5>
+                    <p class="card-text">@(Model.TeacherProfileMetrics?.TotalStudentsTaught ?? 0)</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-dark bg-info-subtle mb-3 border-info">
+                <div class="card-body">
+                    <h5>Total Assignments created</h5>
+                    <p class="card-text">@(Model.TeacherProfileMetrics?.TotalAssignmentsCreated ?? 0)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- #Personal details -->
+    <partial name="_PersonalDetailsProfilePartial" model="@Model.User" />
+    <!-- #endregion -->
+
+    <div class="card mb-3">
+        <div class="card-header h5 fw-bold">Course Details</div>
+        <div class="card-body">
+            <div class="row">
+                @if (Model.TeacherCourses.Count > 0)
+                {
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Course Name</th>
+                                <th>Students Enrolled</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var course in Model.TeacherCourses)
+                            {
+                                <tr>
+                                    <td>@course.CourseName</td>
+                                    <td>
+                                        @if (course.StudentsEnrolled.Count > 0)
+                                        {
+                                            <ul class="list-group mb-4">
+                                                @foreach (var student in course.StudentsEnrolled)
+                                                {
+                                                    <li class="list-group-item">
+                                                        @student
+                                                    </li>
+
+                                                }
+
+                                            </ul>
+                                        }
+                                        else
+                                        {
+                                            <>No students enrolled</>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (course.AssignmentCreated.Count > 0)
+                                        {
+                                            <ul class="list-group mb-4">
+                                                @foreach (var assignment in course.AssignmentCreated)
+                                                {
+                                                    <li class="list-group-item">
+                                                        @assignment
+                                                    </li>
+
+                                                }
+
+                                            </ul>
+                                        }
+                                        else
+                                        {
+                                            <div>No assignments created</div>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+
+                    var message = new NoDataViewModel
+                    {
+                        message = "No courses are assigned"
+                    };
+
+                    <partial name="_NoDataPartial" model="@message" />
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-header h5 fw-bold">Recent Enrollments</div>
+        <div class="card-body">
+            <div class="row">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Course</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var enrollment in Model.RecentlyEnrolledStudents)
+                        {
+                            <tr>
+                                <td>@enrollment.Name</td>
+                                <td>@enrollment.CourseName</td>
+                                <td>@enrollment.EnrollmentDate.ToString("dd MMM, yyyy")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+

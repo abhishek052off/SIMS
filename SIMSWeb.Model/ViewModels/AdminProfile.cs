@@ -18,6 +18,7 @@ namespace SIMSWeb.Model.ViewModels
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public string CourseName { get; set; }
         public DateTime EnrollmentDate { get; set; }
     }
 
@@ -31,5 +32,7 @@ namespace SIMSWeb.Model.ViewModels
     {
         public ProfileStatus Status { get; set; }
         public User User { get; set; }
+        public List<RecentEnrollment> RecentEnrollments { get; set; }
+        public List<PendingAssignments> PendingAssignments { get; set; }
     }
 }

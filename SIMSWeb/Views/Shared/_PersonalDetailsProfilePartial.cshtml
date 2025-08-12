@@ -1,0 +1,36 @@
+﻿@using SIMSWeb.Model.Models
+
+@model User;
+
+<div class="card mb-3">
+    <div class="card-header h5 fw-bold">Personal Details</div>
+    <div class="card-body">
+        <div class="row">
+            <div class="d-inline-flex g-1 align-items-center">
+                <div class="col-auto">
+                    <label class="col-form-label card-body fw-bold">Name:</label>
+                </div>
+                <div class="col-auto">
+                    @Model.Name
+                </div>
+            </div>
+            <div class="d-inline-flex g-1 align-items-center">
+                <div class="col-auto">
+                    <label class="col-form-label card-body fw-bold">Email:</label>
+                </div>
+                <div class="col-auto">
+                    @Model.Email
+                </div>
+            </div>
+            <div class="d-inline-flex g-1 align-items-center">
+                <div class="col-auto">
+                    <label class="col-form-label card-body fw-bold">Designation:</label>
+                </div>
+                <div class="col-auto">
+                    @Model.Role
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

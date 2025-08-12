@@ -161,8 +161,18 @@ namespace SIMSWeb.Data.Repository
             }
 
             courses = courses.Include(c => c.Teacher)
-                .ThenInclude(t => t.User)
-                .Skip(skip).Take(pageSize);
+                .ThenInclude(t => t.User);
+
+            if(skip > 0)
+            {
+                courses = courses.Skip(skip);
+            }
+
+            if(pageSize >0)
+            {
+                courses = courses.Take(pageSize);
+            }
+                
 
             var courseList = await courses.ToListAsync();
             return courseList;
@@ -189,5 +199,47 @@ namespace SIMSWeb.Data.Repository
 
             return averageClassSize;
         }
+
+        public async Task<List<Course>> GetCourseDueInSevenDays(string role, int? userId)
+        {
+            var today = DateTime.Today;
+            var next7Days = today.AddDays(7);
+
+            var coursesWithDueAssignments = _context.Courses
+                .Include(c => c.Enrollments)
+                .Where(course => course.Assignments
+                    .Any(a => a.DueDate >= today && a.DueDate <= next7Days));
+
+            if(userId > 0)
+            {
+                if (role == UsersConstants.TEACHER_ROLE)
+                {
+                    coursesWithDueAssignments = coursesWithDueAssignments.Where(c =>
+                    c.TeacherId == userId);
+                } else if (role == UsersConstants.STUDENT_ROLE)
+                {
+                    coursesWithDueAssignments = coursesWithDueAssignments.Where(c =>
+                    c.Enrollments.Any(e => e.StudentId == userId));
+                }
+
+            }
+
+            return  await coursesWithDueAssignments.ToListAsync();
+        }
+
+        public async Task<List<Course>> GetActiveCourseofRole(int userId)
+        {
+            var courses = await _context.Courses
+                .Include(c => c.Teacher)
+                    .ThenInclude(c => c.User)
+                .Include(c => c.Enrollments)
+                    .ThenInclude(e => e.Student)
+                    .ThenInclude(c => c.User)
+                .Where(c => c.IsActive && c.TeacherId == userId)
+                .ToListAsync();
+
+            return courses;
+        }
+
     }
 }

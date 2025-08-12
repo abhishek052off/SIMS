@@ -46,7 +46,7 @@ namespace SIMSWeb.Data.Repository
             var students = await _dbContext.Students
                 .Include(s => s.User)
                 .Include(s => s.Enrollments)
-                .Where(s => s.User.Role == "Student" && 
+                .Where(s => s.User.Role == "Student" &&
                 !s.Enrollments.Any(e => e.CourseId == courseId))
                 .ToListAsync();
             return students;
@@ -85,6 +85,30 @@ namespace SIMSWeb.Data.Repository
         {
             _dbContext.Enrollments.Add(enrolledDetails);
             await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task<List<Enrollment>> GetRecentEnrolledStudents()
+        {
+            var enrollments = await _dbContext.Enrollments
+                .Include(s => s.Student)
+                    .ThenInclude(s => s.User)
+                .Include(s => s.Course)
+                .Where(u => u.Student.EnrollmentDate < DateTime.Today.AddDays(-7))
+                .ToListAsync();
+            return enrollments;
+        }
+
+        public async Task<List<Enrollment>> GetStudentEnrolledByUserId(int userId)
+        {
+            var enrollments = await _dbContext.Enrollments
+                .Include(s => s.Student)
+                    .ThenInclude(s => s.User)
+                .Include(s => s.Course)
+                    .ThenInclude(c => c.Teacher)
+                .Where(u => u.Course.Teacher.UserId == userId)
+                .ToListAsync();
+
+            return enrollments;
         }
     }
 }
