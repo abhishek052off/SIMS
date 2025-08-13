@@ -23,12 +23,8 @@ namespace SIMSWeb.Controllers
         {
             if (User.Identity.IsAuthenticated)
             {
-                if (User.IsInRole("Admin"))
-                {
-                    return RedirectToAction("Profile", "Home");
-                }
+                return RedirectToAction("Index", "Home");
 
-                return RedirectToAction("TeacherProfile", "Home");
             }
             return View();
         }
@@ -58,7 +54,7 @@ namespace SIMSWeb.Controllers
 
                 await HttpContext.SignInAsync("MyCookieAuth", principal);
 
-                return RedirectToAction("Profile", "Home");
+                return RedirectToAction("Index", "Home");
 
             }
 
@@ -71,36 +67,36 @@ namespace SIMSWeb.Controllers
             return RedirectToAction("Index", "Login");
         }
 
-       /* private string GenerateToken(User user)
-        {
-            var jwtConfig = _configuration.GetSection("JWTSettings");
+        /* private string GenerateToken(User user)
+         {
+             var jwtConfig = _configuration.GetSection("JWTSettings");
 
-            var key = Encoding.UTF8.GetBytes(jwtConfig["Key"]);
-            var issuer = jwtConfig["Issuer"];
-            var audience = jwtConfig["Audience"];
-            var expiration = jwtConfig["ExpiryMinutes"];
+             var key = Encoding.UTF8.GetBytes(jwtConfig["Key"]);
+             var issuer = jwtConfig["Issuer"];
+             var audience = jwtConfig["Audience"];
+             var expiration = jwtConfig["ExpiryMinutes"];
 
-            var tokenDescriptor = new SecurityTokenDescriptor
+             var tokenDescriptor = new SecurityTokenDescriptor
+             {
+                 Subject = new ClaimsIdentity(new[]
             {
-                Subject = new ClaimsIdentity(new[]
-           {
-                new Claim(ClaimTypes.Name, user.Name),
-                new Claim(ClaimTypes.Role, user.Role)
-            }),
-                Expires = DateTime.UtcNow.AddMinutes(Convert.ToDouble(expiration)),
-                Issuer = issuer,
-                Audience = audience,
-                SigningCredentials = new SigningCredentials(
-               new SymmetricSecurityKey(key),
-               SecurityAlgorithms.HmacSha256Signature
-           )
-            };
+                 new Claim(ClaimTypes.Name, user.Name),
+                 new Claim(ClaimTypes.Role, user.Role)
+             }),
+                 Expires = DateTime.UtcNow.AddMinutes(Convert.ToDouble(expiration)),
+                 Issuer = issuer,
+                 Audience = audience,
+                 SigningCredentials = new SigningCredentials(
+                new SymmetricSecurityKey(key),
+                SecurityAlgorithms.HmacSha256Signature
+            )
+             };
 
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var token = tokenHandler.CreateToken(tokenDescriptor);
+             var tokenHandler = new JwtSecurityTokenHandler();
+             var token = tokenHandler.CreateToken(tokenDescriptor);
 
-            return tokenHandler.WriteToken(token);
-        }
-       */
+             return tokenHandler.WriteToken(token);
+         }
+        */
     }
 }

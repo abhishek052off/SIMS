@@ -1,13 +1,14 @@
-﻿using System.Diagnostics;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SIMSWeb.Business.IService;
 using SIMSWeb.Business.Service;
 using SIMSWeb.ConstantsAndUtilities;
+using SIMSWeb.ConstantsAndUtilities.CourseUtilities;
 using SIMSWeb.Model.Models;
 using SIMSWeb.Model.ViewModels;
 using SIMSWeb.Models;
+using System.Diagnostics;
 
 namespace SIMSWeb.Controllers
 {
@@ -31,6 +32,21 @@ namespace SIMSWeb.Controllers
             _courseService = courseService;
             _teacherService = teacherService;
             _studentService = studentService;
+        }
+
+        public async Task<ActionResult> Index()
+        {
+            if (User.IsInRole("Admin"))
+            {
+                return RedirectToAction("Profile", "Home");
+            }
+
+            if (User.IsInRole("Teacher"))
+            {
+                return RedirectToAction("TeacherProfile", "Home");
+            }
+
+            return RedirectToAction("StudentProfile", "Home");
         }
 
         [Authorize(Roles = "Admin")]
@@ -129,8 +145,58 @@ namespace SIMSWeb.Controllers
                 c.Assignments.Count);
 
             return View(teacherProfile);
-        }       
-        
+        }
+
+        [Authorize(Roles = "Student")]
+        public async Task<ActionResult> StudentProfile()
+        {
+            var studentProfile = new StudentProfile();
+
+            if (string.IsNullOrEmpty(_session.Email))
+            {
+                return View(studentProfile);
+            }
+
+            studentProfile.User = new User();
+            var user = await _userService.GetUserByEmail(_session.Email);
+            studentProfile.User = user;            
+
+            var enrolledCourses = await _courseService.GetCoursesByUserId(_session.Id, 0, string.Empty, 0, 0);
+
+            var enrolledCoursesInfo = enrolledCourses.Select(c => new EnrolledCourses
+            {
+                CourseName = c.Name,                
+                AssignmentCreated = c.Assignments.Select(a => a.Title).ToList(),
+            }).ToList();
+
+            studentProfile.EnrolledCourses = enrolledCoursesInfo;
+
+            studentProfile.StudentProfileMetrics = new StudentProfileMetrics();
+
+            studentProfile.StudentProfileMetrics.ActiveCourses = enrolledCourses.Count;
+
+            studentProfile.StudentProfileMetrics.ActiveAssignments = enrolledCoursesInfo
+                .Select(e => e.AssignmentCreated.Count).FirstOrDefault();
+
+            studentProfile.StudentProfileMetrics.CompletedAssignmentsCount = enrolledCourses
+            .SelectMany(course => course.Assignments)
+            .SelectMany(assignment => assignment.Submissions)
+            .Where(submission => submission.Student.UserId == _session.Id)
+            .Count(submission => submission.SubmittedAt != null);
+
+            studentProfile.StudentProfileMetrics.MaximumMarks = enrolledCourses
+                .SelectMany(course => course.Assignments)
+                .SelectMany (assignment => assignment.Submissions)
+                .Where(submission => submission.Student.UserId == _session.Id)
+                .Max(submission => submission.Score);
+
+            var studentProgress = await _courseService.GetProgressofStudent(_session.Id);            
+
+            studentProfile.AssignmentProgress = studentProgress;
+
+            return View(studentProfile);
+        }
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

@@ -13,6 +13,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Http;
 using SIMSWeb.ConstantsAndUtilities;
+using SIMSWeb.Model.ViewModels;
+using SIMSWeb.ConstantsAndUtilities.CourseUtilities;
 
 namespace SIMSWeb.Data.Repository
 {
@@ -139,7 +141,9 @@ namespace SIMSWeb.Data.Repository
                  .Include(c => c.Enrollments)
                     .ThenInclude(e => e.Student)
                     .ThenInclude(s => s.User)
-                  .Include(c => c.Assignments);
+                  .Include(c => c.Assignments)
+                    .ThenInclude(a => a.Submissions)
+                    .ThenInclude(s => s.Student);
 
             if (userId > 0)
             {
@@ -163,16 +167,16 @@ namespace SIMSWeb.Data.Repository
             courses = courses.Include(c => c.Teacher)
                 .ThenInclude(t => t.User);
 
-            if(skip > 0)
+            if (skip > 0)
             {
                 courses = courses.Skip(skip);
             }
 
-            if(pageSize >0)
+            if (pageSize > 0)
             {
                 courses = courses.Take(pageSize);
             }
-                
+
 
             var courseList = await courses.ToListAsync();
             return courseList;
@@ -189,7 +193,7 @@ namespace SIMSWeb.Data.Repository
         public async Task<double> AverageClassSize()
         {
             var courseClassSizes = await _context.Enrollments
-                .GroupBy(e => e.CourseId) 
+                .GroupBy(e => e.CourseId)
                 .Select(g => g.Count())
                 .ToListAsync();
 
@@ -210,13 +214,14 @@ namespace SIMSWeb.Data.Repository
                 .Where(course => course.Assignments
                     .Any(a => a.DueDate >= today && a.DueDate <= next7Days));
 
-            if(userId > 0)
+            if (userId > 0)
             {
                 if (role == UsersConstants.TEACHER_ROLE)
                 {
                     coursesWithDueAssignments = coursesWithDueAssignments.Where(c =>
                     c.TeacherId == userId);
-                } else if (role == UsersConstants.STUDENT_ROLE)
+                }
+                else if (role == UsersConstants.STUDENT_ROLE)
                 {
                     coursesWithDueAssignments = coursesWithDueAssignments.Where(c =>
                     c.Enrollments.Any(e => e.StudentId == userId));
@@ -224,22 +229,36 @@ namespace SIMSWeb.Data.Repository
 
             }
 
-            return  await coursesWithDueAssignments.ToListAsync();
+            return await coursesWithDueAssignments.ToListAsync();
         }
 
-        public async Task<List<Course>> GetActiveCourseofRole(int userId)
+        public async Task<List<AssignmentProgress>> GetProgressofStudent(int userId)
         {
+            // Step 1: Retrieve courses with assignments and submissions for a specific student
             var courses = await _context.Courses
-                .Include(c => c.Teacher)
-                    .ThenInclude(c => c.User)
-                .Include(c => c.Enrollments)
-                    .ThenInclude(e => e.Student)
-                    .ThenInclude(c => c.User)
-                .Where(c => c.IsActive && c.TeacherId == userId)
+                .Include(course => course.Assignments)
+                    .ThenInclude(assignment => assignment.Submissions)
+                .Where(course => course.Assignments
+                    .Any(assignment => assignment.Submissions
+                        .Any(submission => submission.Student.UserId == userId))) // Filter by student
                 .ToListAsync();
 
-            return courses;
-        }
+            // Step 2: Perform in-memory LINQ operations (GroupBy, Max, etc.)
+            var assignmentProgresses = courses
+                .SelectMany(course => course.Assignments)
+                .SelectMany(assignment => assignment.Submissions)
+                .Where(submission => submission.Student.UserId == userId)
+                .GroupBy(submission => submission.AssignmentId)
+                .Select(group => new AssignmentProgress
+                {
+                    AssignmentTitle = group.First().Assignment.Title,
+                    Score = group.Max(submission => submission.Score),
+                    MaxScore = group.First().Assignment.MaxScore,
+                    ProgressColor = CourseUtlity.CalculateProgressColor(group.Max(sub => sub.Score), group.First().Assignment.MaxScore)
+                })
+                .ToList();
 
+            return assignmentProgresses;
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SIMSWeb.ConstantsAndUtilities.AuthUtilities;
 using SIMSWeb.Model.Models;
 using System;
 using System.Collections.Generic;
@@ -70,7 +71,7 @@ namespace SIMSWeb.Data.Context
                         Id = 1,
                         Name = "Admin",
                         Email = "admin@gmail.com",
-                        Password = "admin",
+                        Password = PasswordUtility.HashPassword("admin"),
                         Role = "Admin",
                         CreatedAt = DateTime.Now,
 
@@ -80,7 +81,7 @@ namespace SIMSWeb.Data.Context
                         Id = 2,
                         Name = "Keya",
                         Email = "keya@gmail.com",
-                        Password = "stud",
+                        Password = PasswordUtility.HashPassword("stud"),
                         Role = "Student",
                         CreatedAt = DateTime.Now,
                     },
@@ -89,7 +90,7 @@ namespace SIMSWeb.Data.Context
                         Id = 3,
                         Name = "Tiya",
                         Email = "tiya@gmail.com",
-                        Password = "staff",
+                        Password = PasswordUtility.HashPassword("staff"),
                         Role = "Teacher",
                         CreatedAt = DateTime.Now,
                     },
@@ -98,7 +99,7 @@ namespace SIMSWeb.Data.Context
                         Id = 4,
                         Name = "Naveen",
                         Email = "nav@gmail.com",
-                        Password = "staff",
+                        Password = PasswordUtility.HashPassword("staff"),
                         Role = "Teacher",
                         CreatedAt = DateTime.Now,
                     },
@@ -107,7 +108,7 @@ namespace SIMSWeb.Data.Context
                         Id = 5,
                         Name = "Sid",
                         Email = "sid@gmail.com",
-                        Password = "stud",
+                        Password = PasswordUtility.HashPassword("stud"),
                         Role = "Student",
                         CreatedAt = DateTime.Now,
                     }
@@ -164,7 +165,7 @@ namespace SIMSWeb.Data.Context
                     Description = "Complete the lab report for week 1",
                     MaxScore = 50,
                     DueDate = new DateTime(2025, 9, 5),
-                    CourseId = 11
+                    CourseId = 2
                 }
             );
 

@@ -1,5 +1,173 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@using SIMSWeb.Model.Models
+@using SIMSWeb.Model.ViewModels
+
 @{
+    ViewData["Title"] = "My Profile";
 }
+
+@model StudentProfile;
+
+@{
+    <style>
+        .progress-card {
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            margin: 20px;
+            padding: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .green {
+            color: green;
+        }
+
+        .blue {
+            color: blue;
+        }
+
+        .yellow {
+            color: yellow;
+        }
+
+        .red {
+            color: red;
+        }
+    </style>
+}
+
+<div class="container">
+    <div class="row g-3">
+        <div class="col-md-3">
+            <div class="card text-dark bg-success-subtle mb-3 border-success">
+                <div class="card-body">
+                    <h5 class="card-title">Active Enrolled Courses</h5>
+                    <p class="card-text">@(Model.StudentProfileMetrics?.ActiveCourses ?? 0)</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-dark bg-info-subtle mb-3 border-info">
+                <div class="card-body">
+                    <h5 class="card-title">Active Assignments</h5>
+                    <p class="card-text">@(Model.StudentProfileMetrics?.ActiveAssignments ?? 0)</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-dark bg-info-subtle mb-3 border-info">
+                <div class="card-body">
+                    <h5>Completed Assignments</h5>
+                    <p class="card-text">@(Model.StudentProfileMetrics?.CompletedAssignmentsCount ?? 0)</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-dark bg-info-subtle mb-3 border-info">
+                <div class="card-body">
+                    <h5>Maximum Score</h5>
+                    <p class="card-text">@(Model.StudentProfileMetrics?.MaximumMarks ?? 0)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- #Personal details -->
+    <partial name="_PersonalDetailsProfilePartial" model="@Model.User" />
+    <!-- #endregion -->
+
+    <div class="card mb-3">
+        <div class="card-header h5 fw-bold">Enrolled Course Details</div>
+        <div class="card-body">
+            <div class="row">
+                @if (Model.EnrolledCourses.Count > 0)
+                {
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Course Name</th>
+                                <th>Assignments</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var course in Model.EnrolledCourses)
+                            {
+                                <tr>
+                                    <td>@course.CourseName</td>
+                                    <td>
+                                        @if (course.AssignmentCreated.Count > 0)
+                                        {
+                                            <ul class="list-group mb-4">
+                                                @foreach (var assignment in course.AssignmentCreated)
+                                                {
+                                                    <li class="list-group-item">
+                                                        @assignment
+                                                    </li>
+
+                                                }
+
+                                            </ul>
+                                        }
+                                        else
+                                        {
+                                            <div>No assignments created</div>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+
+                    var message = new NoDataViewModel
+                    {
+                        message = "Not enrolled in courses yet"
+                    };
+
+                    <partial name="_NoDataPartial" model="@message" />
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-header h5 fw-bold">Student Progress Card</div>
+        <div class="card-body">
+            <div class="row">
+                @foreach (var progress in Model.AssignmentProgress)
+                {
+                    var bgColor = "bg-success-subtle";
+                    var color = "text-success";
+
+                    switch(progress.ProgressColor)
+                    {
+                        case "red":
+                            bgColor = "bg-danger-subtle";
+                            color = "text-danger";
+                            break;
+                        case "yellow":
+                            bgColor = "bg-warning-subtle";
+                            color = "text-warning";
+                            break;
+                        case "blue":
+                            bgColor = "bg-info-subtle";
+                            color = "text-info";
+                            break;
+                        default :
+                            break;
+                    }
+
+
+                    <div class="col-md-4">
+                        <div class="progress-card @bgColor">
+                            <p class="fw-bold">@progress.AssignmentTitle</p>
+                            <p class="fs-4 @color">Score: @progress.Score / @progress.MaxScore</p>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+

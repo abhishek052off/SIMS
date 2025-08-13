@@ -21,7 +21,7 @@ namespace SIMSWeb.Business.IService
         Task<int> GetCourseCount(int teacherFilter, string searchText);
         Task<int> GetActiveCoursesCount();
         Task<double> AverageClassSize();
-        Task<List<Course>> GetActiveCourseofRole(int userId);
         Task<List<Course>> GetCourseDueInSevenDays(string role, int? userId);
+        Task<List<AssignmentProgress>> GetProgressofStudent(int userId);
     }
 }

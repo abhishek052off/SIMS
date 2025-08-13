@@ -103,6 +103,7 @@ namespace SIMSWeb.Controllers
                 };
 
                 await _userService.AddUser(user);
+                TempData["success"] = "User added successfully";
                 return RedirectToAction("ManageUsers");
             }
             return View();
@@ -126,7 +127,7 @@ namespace SIMSWeb.Controllers
             if (ModelState.IsValid)
             {
                 await _userService.UpdateUser(userRequest);
-                TempData["success"] = "Category updated successfully";
+                TempData["success"] = "User updated successfully";
                 return RedirectToAction("ManageUsers");
             }
             return View();

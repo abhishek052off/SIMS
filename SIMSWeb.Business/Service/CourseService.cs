@@ -88,14 +88,14 @@ namespace SIMSWeb.Business.Service
             return await _courseRepository.AverageClassSize();
         }
 
-        public Task<List<Course>> GetActiveCourseofRole(int userId)
-        {
-            return _courseRepository.GetActiveCourseofRole(userId);
-        }
-
         public Task<List<Course>> GetCourseDueInSevenDays(string role, int? userId)
         {
             return _courseRepository.GetCourseDueInSevenDays(role, userId);
+        }
+
+        public async Task<List<AssignmentProgress>> GetProgressofStudent(int userId)
+        {
+            return await _courseRepository.GetProgressofStudent(userId);
         }
     }
 }
