@@ -16,58 +16,58 @@
             padding: 15px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
-
-        .green {
-            color: green;
-        }
-
-        .blue {
-            color: blue;
-        }
-
-        .yellow {
-            color: yellow;
-        }
-
-        .red {
-            color: red;
-        }
     </style>
 }
 
 <div class="container">
     <div class="row g-3">
         <div class="col-md-3">
-            <div class="card text-dark bg-success-subtle mb-3 border-success">
-                <div class="card-body">
-                    <h5 class="card-title">Active Enrolled Courses</h5>
-                    <p class="card-text">@(Model.StudentProfileMetrics?.ActiveCourses ?? 0)</p>
-                </div>
-            </div>
+            @{
+                var metricModel = new MetricsViewModel
+                {
+                    Label = "Active Enrolled Courses",
+                    Value = Model.StudentProfileMetrics?.ActiveCourses ?? 0,
+                    BgColor = "bg-success-subtle border-success",
+                    ActionName = "ManageCourses",
+                    ControllerName = "Course"
+                };
+                <partial name="_MetricsViewPartial" model="@metricModel" />
+            }
         </div>
         <div class="col-md-3">
-            <div class="card text-dark bg-info-subtle mb-3 border-info">
-                <div class="card-body">
-                    <h5 class="card-title">Active Assignments</h5>
-                    <p class="card-text">@(Model.StudentProfileMetrics?.ActiveAssignments ?? 0)</p>
-                </div>
-            </div>
+            @{
+                var metricAssignmentModel = new MetricsViewModel
+                {
+                    Label = "Active Assignments",
+                    Value = Model.StudentProfileMetrics?.ActiveAssignments ?? 0,
+                    BgColor = "bg-info-subtle border-info",
+                    ActionName = "ManageCourses",
+                    ControllerName = "Course"
+                };
+                <partial name="_MetricsViewPartial" model="@metricAssignmentModel" />
+            }
         </div>
         <div class="col-md-3">
-            <div class="card text-dark bg-info-subtle mb-3 border-info">
-                <div class="card-body">
-                    <h5>Completed Assignments</h5>
-                    <p class="card-text">@(Model.StudentProfileMetrics?.CompletedAssignmentsCount ?? 0)</p>
-                </div>
-            </div>
+            @{
+                var metricCompletedAssignmentModel = new MetricsViewModel
+                {
+                    Label = "Completed Assignments",
+                    Value = Model.StudentProfileMetrics?.CompletedAssignmentsCount ?? 0,
+                    BgColor = "bg-info-subtle border-info",
+                };
+                <partial name="_MetricsViewPartial" model="@metricCompletedAssignmentModel" />
+            }
         </div>
         <div class="col-md-3">
-            <div class="card text-dark bg-info-subtle mb-3 border-info">
-                <div class="card-body">
-                    <h5>Maximum Score</h5>
-                    <p class="card-text">@(Model.StudentProfileMetrics?.MaximumMarks ?? 0)</p>
-                </div>
-            </div>
+            @{
+                var metricMaxMarksModel = new MetricsViewModel
+                {
+                    Label = "Maximum Score",
+                    Value = Model.StudentProfileMetrics?.MaximumMarks ?? 0,
+                    BgColor = "bg-info-subtle border-info",
+                };
+                <partial name="_MetricsViewPartial" model="@metricMaxMarksModel" />
+            }
         </div>
     </div>
     <!-- #Personal details -->
@@ -139,7 +139,7 @@
                     var bgColor = "bg-success-subtle";
                     var color = "text-success";
 
-                    switch(progress.ProgressColor)
+                    switch (progress.ProgressColor)
                     {
                         case "red":
                             bgColor = "bg-danger-subtle";
@@ -153,7 +153,7 @@
                             bgColor = "bg-info-subtle";
                             color = "text-info";
                             break;
-                        default :
+                        default:
                             break;
                     }
 

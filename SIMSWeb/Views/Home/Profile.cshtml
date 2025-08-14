@@ -10,28 +10,41 @@
 <div class="container">
     <div class="row g-3">
         <div class="col-md-3">
-            <div class="card text-dark bg-info-subtle mb-3 border-info">
-                <div class="card-body">
-                    <h5 class="card-title">Total Users</h5>
-                    <p class="card-text">@Model.Status.TotalUsers</p>
-                </div>
-            </div>
+            @{
+                var metricActiveUserModel = new MetricsViewModel
+                {
+                    Label = "Total Users",
+                    Value = @Model.Status.TotalUsers,
+                    BgColor = "bg-info-subtle border-info",
+                    ActionName = "ManageUsers",
+                    ControllerName = "Users"
+                };
+                <partial name="_MetricsViewPartial" model="@metricActiveUserModel" />
+            }
         </div>
         <div class="col-md-3">
-            <div class="card text-dark bg-success-subtle mb-3 border-success">
-                <div class="card-body">
-                    <h5 class="card-title">Active Courses</h5>
-                    <p class="card-text">@Model.Status.ActiveCourses</p>
-                </div>
-            </div>
+            @{
+                var metricActiveCourseModel = new MetricsViewModel
+                {
+                    Label = "Active Courses",
+                    Value = Model.Status.ActiveCourses,
+                    BgColor = "bg-success-subtle border-success",
+                    ActionName = "ManageCourses",
+                    ControllerName = "Course"
+                };
+                <partial name="_MetricsViewPartial" model="@metricActiveCourseModel" />
+            }
         </div>
         <div class="col-md-3">
-            <div class="card text-dark bg-info-subtle mb-3 border-info">
-                <div class="card-body">
-                    <h5>Avg Class Size</h5>
-                    <p class="card-text">@Model.Status.AvgClassSizePerCourse</p>
-                </div>
-            </div>
+            @{
+                var metricAvgClassSizeModel = new MetricsViewModel
+                {
+                    Label = "Avg Class Size",
+                    Value = Model.Status.AvgClassSizePerCourse,
+                    BgColor = "bg-info-subtle border-info",
+                };
+                <partial name="_MetricsViewPartial" model="@metricAvgClassSizeModel" />
+            }
         </div>
     </div>
     <!-- #Personal details -->

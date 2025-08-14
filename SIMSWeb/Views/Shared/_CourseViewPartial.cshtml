@@ -37,13 +37,17 @@
                     </label>
                 </div>
                 <div class="col-9 flex-wrap" style="word-wrap: break-word; word-break: break-all; align-content:center">
-                    <a target="_blank" class="text-primary text-decoration-none" asp-controller="Assignment" 
-                    asp-action="ViewAssignments" asp-route-courseId="@Model.Id" title="View Assignments">
+                    <a target="_blank" class="text-primary text-decoration-none g-2" asp-controller="Assignment"
+                       asp-action="ViewAssignments" asp-route-courseId="@Model.Id" title="View Assignments">
                         @Model.AssignmentsCount
-                        @if (Model.AssignmentsCount > 0)
-                        {
-                            <i class="bi bi-box-arrow-up-right"></i>
-                        }
+
+                        <span>
+                            View assignments
+                            @if (Model.AssignmentsCount > 0)
+                            {
+                                <i class="bi bi-box-arrow-up-right"></i>
+                            }
+                        </span>
                     </a>
                 </div>
             </div>

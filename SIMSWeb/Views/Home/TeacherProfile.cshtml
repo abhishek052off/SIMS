@@ -10,28 +10,39 @@
 <div class="container">
     <div class="row g-3">
         <div class="col-md-3">
-            <div class="card text-dark bg-success-subtle mb-3 border-success">
-                <div class="card-body">
-                    <h5 class="card-title">Active Teaching Courses</h5>
-                    <p class="card-text">@(Model.TeacherProfileMetrics?.ActiveCourses ?? 0)</p>
-                </div>
-            </div>
+            @{
+                var metricActiveCourseModel = new MetricsViewModel
+                {
+                    Label = "Active Teaching Courses",
+                    Value = Model.TeacherProfileMetrics?.ActiveCourses ?? 0,
+                    BgColor = "bg-success-subtle border-success",
+                    ActionName = "ManageCourses",
+                    ControllerName = "Course"
+                };
+                <partial name="_MetricsViewPartial" model="@metricActiveCourseModel" />
+            }
         </div>
         <div class="col-md-3">
-            <div class="card text-dark bg-info-subtle mb-3 border-info">
-                <div class="card-body">
-                    <h5 class="card-title">Total Students Enrolled</h5>
-                    <p class="card-text">@(Model.TeacherProfileMetrics?.TotalStudentsTaught ?? 0)</p>
-                </div>
-            </div>
+            @{
+                var metricEnrolledStudentsModel = new MetricsViewModel
+                {
+                    Label = "Total Students Enrolled",
+                    Value = Model.TeacherProfileMetrics?.TotalStudentsTaught ?? 0,
+                    BgColor = "bg-info-subtle border-info",
+                };
+                <partial name="_MetricsViewPartial" model="@metricEnrolledStudentsModel" />
+            }
         </div>
         <div class="col-md-3">
-            <div class="card text-dark bg-info-subtle mb-3 border-info">
-                <div class="card-body">
-                    <h5>Total Assignments created</h5>
-                    <p class="card-text">@(Model.TeacherProfileMetrics?.TotalAssignmentsCreated ?? 0)</p>
-                </div>
-            </div>
+            @{
+                var metricAssignmentsModel = new MetricsViewModel
+                {
+                    Label = "Total Assignments created",
+                    Value = Model.TeacherProfileMetrics?.TotalAssignmentsCreated ?? 0,
+                    BgColor = "bg-info-subtle border-info",
+                };
+                <partial name="_MetricsViewPartial" model="@metricAssignmentsModel" />
+            }
         </div>
     </div>
     <!-- #Personal details -->

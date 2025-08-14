@@ -21,110 +21,110 @@
             </div>
         }
     </div>
-    <div class="row">
-        <form method="get" asp-action="ManageCourses" asp-controller="Course" class="my-2">
-            <div class="d-flex gap-3 float-end">
-                <div class="col-4">
-                    <select asp-items="@(new SelectList(Model.FilterModel.TeacherList, "Id", "Name", ViewBag.TeacherId))"
-                            name="TeacherFilter" class="form-control rounded-2">
-                    </select>
-                </div>
-                <div class="d-flex gap-2">
-                    <input type="text" name="CourseSearchText" value="@ViewBag.CourseSearchText" class="form-control rounded-5" />
-
-                    <button type="submit" class="btn btn-primary rounded-5">Search</button>
-                </div>
+    <form method="get" asp-action="ManageCourses" asp-controller="Course" class="my-2">
+        <div class="row">
+            <div class="col-8">
+                <input type="text" name="CourseSearchText" value="@ViewBag.CourseSearchText" class="form-control rounded-5" />
             </div>
-        </form>
+            <div class="col-3">
+                <select asp-items="@(new SelectList(Model.FilterModel.TeacherList, "Id", "Name", ViewBag.TeacherId))"
+                        name="TeacherFilter" class="form-control rounded-2">
+                </select>
+            </div>
+            <div class="col-1">
+                <button type="submit" class="btn btn-primary rounded-5">Search</button>
+            </div>
+        </div>
+    </form>
 
-    </div>
-    <table class="table table-striped table-bordered" style="width:100%">
-        <thead>
+</div>
+<table class="table table-striped table-bordered" style="width:100%">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Course Name</th>
+            <th>Description</th>
+            <th>Teacher Name</th>
+            <th>Active</th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model.Courses.Select((value, index) => (value, index)))
+        {
             <tr>
-                <th>#</th>
-                <th>Course Name</th>
-                <th>Description</th>
-                <th>Teacher Name</th>
-                <th>Active</th>
-                <th></th>
-            </tr>
-        </thead>
-
-        <tbody>
-            @foreach (var item in Model.Courses.Select((value, index) => (value, index)))
-            {
-                <tr>
-                    <td class="col-1">@(item.index + rowIndex + 1)</td>
-                    <td class="col-3">@item.value.Name</td>
-                    <td>
-                        <div class="text-truncate" style="width:250px" data-toggle="tooltip" role="tooltip"
-                             data-placement="top" title="@item.value.Description">
-                            @item.value.Description
-                        </div>
-                    </td>
-                    <td class="col-2">
-                        @if (item.value?.Teacher?.User?.Name != null && !string.IsNullOrEmpty(item.value.Teacher.User.Name))
-                        {
-                            @item.value.Teacher.User.Name
-                        }
-                    </td>
-                    <td class="col-1">
-                        @if (item.value.IsActive)
-                        {
-                            <i class="bi bi-check-circle text-primary"></i>
-                        }
-                        else
-                        {
-                            <i class="bi bi-x-circle text-danger"></i>
-                        }
-                    </td>
-                    <td class="col-2">
-                        @if (User.IsInRole("Admin"))
-                        {
-                            <span>
-                                <a asp-action="EditCourse" asp-controller="Course" asp-route-id="@item.value.Id"
-                                   class="btn btn-sm btn-info" title="Edit course">
-                                    <i class="bi bi-pencil"></i>
-                                </a>
-                            </span>
-                            <span>
-                                <a asp-action="DeleteCourse" asp-controller="Course" asp-route-id="@item.value.Id"
-                                   class="btn btn-sm btn-danger" title="Delete course">
-                                    <i class="bi bi-trash"></i>
-                                </a>
-                            </span>
-                        }
-                        <span>
-                            <a asp-action="ViewCourse" asp-controller="Course" title="View details"
-                               asp-route-id="@item.value.Id" class="btn btn-outline-primary">
-                                <i class="bi bi-list"></i>
-                            </a>
-                        </span>
-                    </td>
-
-                </tr>
-            }
-        </tbody>
-        <tfoot>
-            <tr>
-                <td colspan="5" class="border-end-0">Total Records: @Model.Paginations.TotalRecords</td>
-                <td class="border-start-0 float-end">
-                    @if (Model.Paginations.CurrentPage > 1)
+                <td class="col-1">@(item.index + rowIndex + 1)</td>
+                <td class="col-3">@item.value.Name</td>
+                <td>
+                    <div class="text-truncate" style="width:250px" data-toggle="tooltip" role="tooltip"
+                         data-placement="top" title="@item.value.Description">
+                        @item.value.Description
+                    </div>
+                </td>
+                <td class="col-2">
+                    @if (item.value?.Teacher?.User?.Name != null && !string.IsNullOrEmpty(item.value.Teacher.User.Name))
                     {
-                        <a href="@Url.Action("ManageCourses", new { page = 1, pageSize = Model.Paginations.PageSize })">First</a>
-                        <a href="@Url.Action("ManageCourses", new { page = Model.Paginations.CurrentPage - 1, pageSize = Model.Paginations.PageSize })">Previous</a>
-                    }
-
-                    <span>Page @Model.Paginations.CurrentPage of @Model.Paginations.TotalPages</span>
-
-                    @if (Model.Paginations.CurrentPage < Model.Paginations.TotalPages)
-                    {
-                        <a href="@Url.Action("ManageCourses", new { page = Model.Paginations.CurrentPage + 1, pageSize = Model.Paginations.PageSize })">Next</a>
-                        <a href="@Url.Action("ManageCourses", new { page = Model.Paginations.TotalPages, pageSize = Model.Paginations.PageSize })">Last</a>
+                        @item.value.Teacher.User.Name
                     }
                 </td>
-            </tr>
+                <td class="col-1">
+                    @if (item.value.IsActive)
+                    {
+                        <i class="bi bi-check-circle text-primary"></i>
+                    }
+                    else
+                    {
+                        <i class="bi bi-x-circle text-danger"></i>
+                    }
+                </td>
+                <td class="col-2">
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <span>
+                            <a asp-action="EditCourse" asp-controller="Course" asp-route-id="@item.value.Id"
+                               class="btn btn-sm btn-info" title="Edit course">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                        </span>
+                        <span>
+                            <a asp-action="DeleteCourse" asp-controller="Course" asp-route-id="@item.value.Id"
+                               class="btn btn-sm btn-danger" title="Delete course">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </span>
+                    }
+                    <span>
+                        <a asp-action="ViewCourse" asp-controller="Course" title="View details"
+                           asp-route-id="@item.value.Id" class="btn btn-outline-primary">
+                            <i class="bi bi-list"></i>
+                        </a>
+                    </span>
+                </td>
 
-        </tfoot>
-    </table>
+            </tr>
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="5" class="border-end-0">Total Records: @Model.Paginations.TotalRecords</td>
+            <td class="border-start-0 float-end">
+                @if (Model.Paginations.CurrentPage > 1)
+                {
+                    <a href="@Url.Action("ManageCourses", new { page = 1, pageSize = Model.Paginations.PageSize })">First</a>
+                    <a href="@Url.Action("ManageCourses", new { page = Model.Paginations.CurrentPage - 1, pageSize = Model.Paginations.PageSize })">Previous</a>
+                }
+
+                <span>Page @Model.Paginations.CurrentPage of @Model.Paginations.TotalPages</span>
+
+                @if (Model.Paginations.CurrentPage < Model.Paginations.TotalPages)
+                {
+                    <a href="@Url.Action("ManageCourses", new { page = Model.Paginations.CurrentPage + 1, pageSize = Model.Paginations.PageSize })">Next</a>
+                    <a href="@Url.Action("ManageCourses", new { page = Model.Paginations.TotalPages, pageSize = Model.Paginations.PageSize })">Last</a>
+                }
+            </td>
+        </tr>
+
+    </tfoot>
+</table>
 </div>

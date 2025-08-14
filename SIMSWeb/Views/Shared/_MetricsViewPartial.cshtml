@@ -1,0 +1,23 @@
+﻿@model MetricsViewModel;
+
+@{
+    var isClickable = !String.IsNullOrEmpty(Model.ActionName) && !String.IsNullOrEmpty(Model.ControllerName);
+    var url = $"/{Model.ControllerName}/{Model.ActionName}";
+}
+
+<div class="card text-dark mb-3 @Model.BgColor"  
+    onclick="@(isClickable ? $"window.location.href='{url}'" : "")"
+    @(isClickable ? "role=button" : "") >
+    <div class="card-body">
+        <span class="d-flex justify-content-between">
+            <span class="card-title">@Model.Label</span>
+            @if (isClickable)
+            {
+                <a class="link-primary" asp-action="@Model.ActionName" asp-controller="@Model.ControllerName">
+                    <i class="bi bi-arrow-right"></i>
+                </a>
+            }
+        </span>
+        <p class="card-text">@Model.Value</p>
+    </div>
+</div>

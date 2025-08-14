@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using SIMSWeb.Business.IService;
 using SIMSWeb.Business.Service;
 using SIMSWeb.Business.ServiceDTO.CourseDTO;
@@ -24,15 +25,17 @@ namespace SIMSWeb.Controllers
         private readonly ITeacherService _teacherService;
         private readonly IStudentService _studentService;
         private readonly IMapper _mapper;
+        private readonly ILogger<CourseController> _logger;
 
         public CourseController(ICourseService courseService,
             ITeacherService teacherService, IStudentService studentService,
-            IMapper mapper)
+            IMapper mapper, ILogger<CourseController> logger)
         {
             _courseService = courseService;
             _teacherService = teacherService;
             _studentService = studentService;
             _mapper = mapper;
+            _logger = logger;
         }
         public IActionResult Index()
         {
@@ -40,6 +43,7 @@ namespace SIMSWeb.Controllers
         }
 
         [HttpGet("Courses")]
+        [Route("Course/ManageCourses")]
         public async Task<ActionResult> ManageCourses(int TeacherFilter,
             string CourseSearchText, int Page = 1, int PageSize = 5)
         {
@@ -56,6 +60,8 @@ namespace SIMSWeb.Controllers
 
             ViewBag.TeacherId = TeacherFilter == 0 ? -1 : TeacherFilter;
             ViewBag.CourseSearchText = CourseSearchText ?? string.Empty;
+
+            _logger.LogInformation($"TeacherFilter={JsonConvert.SerializeObject(TeacherFilter)} ");
 
             if (User.IsInRole("Teacher") || User.IsInRole("Student"))
             {
@@ -83,6 +89,8 @@ namespace SIMSWeb.Controllers
                     PageSize = PageSize,
                     CurrentPage = Page
                 };
+
+                //_logger.LogInformation($"ManageCourseVM={JsonConvert.SerializeObject(manageCourseVM, Formatting.Indented)} ");
 
 
                 return View(manageCourseVM);
