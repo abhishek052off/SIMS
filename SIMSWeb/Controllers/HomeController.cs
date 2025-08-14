@@ -12,7 +12,7 @@ using System.Diagnostics;
 
 namespace SIMSWeb.Controllers
 {
-    [Authorize]
+
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -198,10 +198,33 @@ namespace SIMSWeb.Controllers
         }
 
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        //[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        //public IActionResult Error()
+        //{
+        //    return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        //}
+
+        public IActionResult Error(int statusCode)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            var _statusCode = statusCode > 0 ? statusCode : HttpContext.Response.StatusCode;
+
+            var model = new ErrorViewModel
+            {
+                StatusCode = _statusCode
+            };
+
+            model.ErrorMessage = statusCode switch
+            {
+                404 => "Oops! The page you requested could not be found.",
+                500 => "Something went wrong on our server. Please try again later.",
+                403 => "You don't have permission to view this page.",
+                400 => "The request is invalid. Please check and try again.",
+                502 => "There seems to be a problem with the server.",
+                503 => "The service is temporarily unavailable. Please try again later.",
+                _ => "An unexpected error occurred. Please try again later."
+            };
+
+            return View(model);
         }
     }
 }
