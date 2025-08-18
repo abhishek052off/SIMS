@@ -37,9 +37,9 @@
                                 <th>#</th>
                                 <th>Student Name</th>
                                 <th>Enrollment Date</th>
-                                <th>Term</th>
+                                @* <th>Term</th>
                                 <th>Score</th>
-                                <th>Remarks</th>
+                                <th>Remarks</th> *@
                             </tr>
                             @foreach (var student in Model.Students.Select((value, index) => (value, index)))
                             {
@@ -49,7 +49,7 @@
                                     <td class="col-2">
                                         @(student.value.EnrollmentDate?.ToString("dd MMM, yyyy") ?? "No date available")
                                     </td>
-                                    <td class="col-1">
+                                   @*  <td class="col-1">
                                         @student.value.Term
                                     </td>
                                     <td class="col-1">
@@ -57,7 +57,7 @@
                                     </td>
                                     <td>
                                         @student.value.Comments
-                                    </td>
+                                    </td> *@
                                 </tr>
 
                             }

@@ -15,6 +15,9 @@ using Microsoft.AspNetCore.Http;
 using SIMSWeb.ConstantsAndUtilities;
 using SIMSWeb.Model.ViewModels;
 using SIMSWeb.ConstantsAndUtilities.CourseUtilities;
+using Microsoft.Extensions.Logging;
+using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace SIMSWeb.Data.Repository
 {
@@ -22,11 +25,13 @@ namespace SIMSWeb.Data.Repository
     {
         private readonly SIMSDBContext _context;
         private readonly UserSession _userSession;
+        private readonly ILogger<CourseRepository> _logger;
 
-        public CourseRepository(SIMSDBContext context, UserSession session)
+        public CourseRepository(SIMSDBContext context, UserSession session, ILogger<CourseRepository> logger)
         {
             _context = context;
             _userSession = session;
+            _logger = logger;
         }
 
         public async Task AddCourse(Course course)
@@ -257,6 +262,8 @@ namespace SIMSWeb.Data.Repository
                     ProgressColor = CourseUtlity.CalculateProgressColor(group.Max(sub => sub.Score), group.First().Assignment.MaxScore)
                 })
                 .ToList();
+
+            _logger.LogInformation($"==Assignment progress of each student { JsonConvert.SerializeObject(assignmentProgresses, Formatting.Indented)} ");
 
             return assignmentProgresses;
         }

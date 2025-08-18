@@ -1,5 +1,5 @@
-﻿@using SIMSWeb.Model.Models
-@using SIMSWeb.Model.ViewModels
+﻿@using SIMSWeb.Model.Models;
+@using SIMSWeb.Model.ViewModels;
 
 @{
     ViewData["Title"] = "My Profile";
@@ -40,7 +40,7 @@
                 var metricAvgClassSizeModel = new MetricsViewModel
                 {
                     Label = "Avg Class Size",
-                    Value = Model.Status.AvgClassSizePerCourse,
+                    Value = Math.Round(@Model.Status.AvgClassSizePerCourse, 2),
                     BgColor = "bg-info-subtle border-info",
                 };
                 <partial name="_MetricsViewPartial" model="@metricAvgClassSizeModel" />
@@ -53,7 +53,7 @@
     <div class="card mb-3">
         <div class="card-header h5 fw-bold">Recent Enrollments</div>
         <div class="card-body">
-            <div class="row">
+            <div class="row table-responsive">
                 <table class="table table-bordered table-striped">
                     <thead>
                         <tr>

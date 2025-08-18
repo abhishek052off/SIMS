@@ -10,6 +10,7 @@ using SIMSWeb.Models.Course;
 
 namespace SIMSWeb.Controllers
 {
+    [Authorize]
     public class AssignmentController : Controller
     {
         private readonly IAssignmentService _assignmentService;
@@ -46,6 +47,7 @@ namespace SIMSWeb.Controllers
 
         }
 
+        [Authorize(Policy = "AdminTeacherOnly")]
         public async Task<ActionResult> AddAssignment(int courseId)
         {
             var assignmentVM = new AssignmentViewModel();
@@ -59,6 +61,7 @@ namespace SIMSWeb.Controllers
             return View(assignmentVM);
         }
 
+        [Authorize(Policy = "AdminTeacherOnly")]
         [HttpPost, ActionName("AddAssignment")]
         public async Task<ActionResult> AddAssignmentPost(AssignmentViewModel assignmentRequest)
         {
@@ -77,16 +80,13 @@ namespace SIMSWeb.Controllers
         [Authorize(Policy = "AdminTeacherOnly")]
         public async Task<ActionResult> EditAssignment(int id)
         {
-            var assignmentView = new AssignmentViewModel();
-
-
             var assignment = await _assignmentService.GetAssignmentById(id);
             if (assignment == null)
             {
                 return RedirectToAction("ViewAssignments", new {courseId = assignment.CourseId});
             }
 
-            assignmentView = _mapper.Map<AssignmentViewModel>(assignment);           
+            var assignmentView = _mapper.Map<AssignmentViewModel>(assignment);           
 
             return View(assignmentView);
         }

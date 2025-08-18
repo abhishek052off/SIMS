@@ -14,7 +14,7 @@ using System.Drawing.Printing;
 
 namespace SIMSWeb.Controllers
 {
-    [Authorize]
+    [Authorize(Policy = "AdminOnly")]
     public class UsersController : Controller
     {
         private readonly IUserService _userService;
@@ -31,7 +31,6 @@ namespace SIMSWeb.Controllers
             return View();
         }
 
-        [Authorize(Policy = "AdminOnly")]
         public async Task<ActionResult> ManageUsers(string UserRole, string SearchText, int Page = 1, int PageSize = 10)
         {
             var manageUsersVM = new ManageUserVM();
@@ -83,6 +82,7 @@ namespace SIMSWeb.Controllers
             return View(manageUsersVM);
         }
 
+        [Authorize(Policy = "AdminOnly")]
         public IActionResult AddUsers()
         {
             return View();
@@ -152,7 +152,7 @@ namespace SIMSWeb.Controllers
             if (ModelState.IsValid)
             {
                 await _userService.DeleteUser(id);
-                TempData["success"] = "Category deleted successfully";
+                TempData["success"] = "User deleted successfully";
                 return RedirectToAction("ManageUsers");
 
             }

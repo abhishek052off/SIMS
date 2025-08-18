@@ -11,6 +11,7 @@ using SIMSWeb.Model.ViewModels;
 
 namespace SIMSWeb.Controllers
 {
+    [Authorize]
     public class SubmissionController : Controller
     {
         private readonly ISubmissionService _submissionService;
@@ -49,6 +50,7 @@ namespace SIMSWeb.Controllers
 
         }
 
+        [Authorize(Policy = "AdminTeacherOnly")]
         public async Task<ActionResult> AddSubmission(int assignmentId, int courseId)
         {
             var submissionVM = new UpdateSubmissionDTO();
@@ -58,8 +60,12 @@ namespace SIMSWeb.Controllers
             ViewBag.AssignmentId = assignmentId == 0 ? 0 : assignmentId;
 
             var studentList = await _studentService.GetEnrolledStudentsByCourseId(courseId);
+            var submissions = await _submissionService.GetSubmissionByAssignmentId(assignmentId);
 
-            submissionVM.StudentList = studentList;
+            var studentsHasNoSubmission = studentList.Where(s => 
+                !submissions.Any(sub => sub.Student.User.Name == s.Name)).ToList();
+
+            submissionVM.StudentList = studentsHasNoSubmission;
             submissionVM.Submission = new SubmissionViewModel();
             submissionVM.Submission.AssignmentId = assignmentId;
             submissionVM.Submission.AssignmentName = assignment.Title;
@@ -80,6 +86,7 @@ namespace SIMSWeb.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "AdminTeacherOnly")]
         public async Task<ActionResult> AddSubmission(int assignmentId, int courseId, SubmissionViewModel submissionRequest)
         {
             if (!ModelState.IsValid)
@@ -102,8 +109,6 @@ namespace SIMSWeb.Controllers
         [Authorize(Policy = "AdminTeacherOnly")]
         public async Task<ActionResult> EditSubmission(int id, int courseId, int assignmentId)
         {
-            var submissionView = new SubmissionViewModel();
-
             ViewBag.CourseId = courseId == 0 ? 0 : courseId;
             ViewBag.AssignmentId = assignmentId == 0 ? 0 : assignmentId;
 
@@ -117,7 +122,7 @@ namespace SIMSWeb.Controllers
                    new { courseId = courseId, assignmentId = assignmentId });
             }
 
-            submissionView = _mapper.Map<SubmissionViewModel>(submission);
+            var submissionView = _mapper.Map<SubmissionViewModel>(submission);
             
             if(submissionView.StudentId != 0)
             {

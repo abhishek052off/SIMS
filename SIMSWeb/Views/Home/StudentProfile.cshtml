@@ -80,7 +80,8 @@
             <div class="row">
                 @if (Model.EnrolledCourses.Count > 0)
                 {
-                    <table class="table table-bordered table-striped">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped">
                         <thead>
                             <tr>
                                 <th>Course Name</th>
@@ -115,6 +116,7 @@
                             }
                         </tbody>
                     </table>
+                    </div>
                 }
                 else
                 {

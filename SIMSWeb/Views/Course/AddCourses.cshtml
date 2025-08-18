@@ -23,7 +23,7 @@
             <label>Teacher</label>
             <select asp-for="@Model.CourseModel.TeacherId" 
                 asp-items="@(new SelectList(Model.TeacherListModel, "Id", "Name"))" 
-                name="TeacherId" class="form-control">
+                name="TeacherId" class="form-select">
             </select>
             <span asp-validation-for="@Model.CourseModel.TeacherId" class="text-danger" />
         </div>

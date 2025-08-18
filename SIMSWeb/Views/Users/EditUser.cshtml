@@ -20,17 +20,18 @@
         </div>
         <div class="mb-3">
             <label>Email</label>
-            <input asp-for="Email" type="email" class="form-control" />
+            <input asp-for="Email" type="email" class="form-control" disabled="@(Model.Name == "Admin")" />
             <span asp-validation-for="Email" class="text-danger"></span>
         </div>
+
         <div class="mb-3">
             <label>Password</label>
-            <input asp-for="Password" type="password" class="form-control" />
+            <input asp-for="Password" type="password" class="form-control" disabled="@(Model.Name == "Admin")" />
             <span asp-validation-for="Password" class="text-danger"></span>
         </div>
         <div class="mb-3">
             <label>Role</label>
-            <select asp-for="Role" class="form-control">
+            <select asp-for="Role" class="form-select" disabled="@(Model.Name == "Admin")">
                 <option value=@UsersConstants.ADMIN_ROLE>Admin</option>
                 <option value=@UsersConstants.TEACHER_ROLE>Teacher</option>
                 <option value=@UsersConstants.STUDENT_ROLE>Student</option>
@@ -39,7 +40,10 @@
         </div>
         <div class="row">
             <div class="col-6">
-                <button type="submit" class="btn btn-primary" asp-action="EditUser" asp-controller="Users">Update</button>
+                @if (Model.Name != "Admin") 
+                {
+                    <button type="submit" class="btn btn-primary" asp-action="EditUser" asp-controller="Users">Update</button>
+                }
                 <a asp-controller="Users" asp-action="ManageUsers" class="btn btn-outline-primary">Cancel</a>
             </div>
         </div>

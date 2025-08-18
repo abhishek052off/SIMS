@@ -44,6 +44,7 @@ namespace SIMSWeb.Controllers
 
         [HttpGet("Courses")]
         [Route("Course/ManageCourses")]
+        [Authorize]
         public async Task<ActionResult> ManageCourses(int TeacherFilter,
             string CourseSearchText, int Page = 1, int PageSize = 5)
         {
@@ -138,6 +139,8 @@ namespace SIMSWeb.Controllers
                 Name = "Select Teacher"
             });
 
+            _logger.LogInformation($"TeacherList={JsonConvert.SerializeObject(teacherList, Formatting.Indented)} ");
+
             return teacherList;
         }
 
@@ -163,6 +166,7 @@ namespace SIMSWeb.Controllers
             var course = _mapper.Map<CourseViewModel>(courseRequest);
 
             await _courseService.AddCourse(course);
+            TempData["success"] = "Course added successfully";
             return RedirectToAction("ManageCourses");
 
         }
@@ -217,7 +221,7 @@ namespace SIMSWeb.Controllers
                     else if (courseRequest.EnrollStudents)
                     {
                         queryParams["EnrollStudents"] = true;
-                    }
+                    }              
                     return RedirectToAction("ViewCourse", "Course", queryParams);
                 }
 
@@ -304,6 +308,7 @@ namespace SIMSWeb.Controllers
             return RedirectToAction("ManageCourses");
         }
 
+        [Authorize]
         public async Task<ActionResult> ViewCourse(int id)
         {
             var course = await _courseService.GetCourseDetailsById(id);
