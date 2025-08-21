@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace SIMSWeb.Data.Migrations
 {
-    public partial class AddTablesToDB : Migration
+    public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -75,7 +75,9 @@ namespace SIMSWeb.Data.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    TeacherId = table.Column<int>(type: "int", nullable: false)
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsCompleted = table.Column<bool>(type: "bit", nullable: true),
+                    TeacherId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -85,6 +87,29 @@ namespace SIMSWeb.Data.Migrations
                         column: x => x.TeacherId,
                         principalTable: "Teachers",
                         principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Assignments",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    MaxScore = table.Column<int>(type: "int", nullable: false),
+                    DueDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CourseId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Assignments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Assignments_Courses_CourseId",
+                        column: x => x.CourseId,
+                        principalTable: "Courses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -104,9 +129,38 @@ namespace SIMSWeb.Data.Migrations
                         name: "FK_Enrollments_Courses_CourseId",
                         column: x => x.CourseId,
                         principalTable: "Courses",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Enrollments_Students_StudentId",
+                        column: x => x.StudentId,
+                        principalTable: "Students",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Submissions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    AssignmentId = table.Column<int>(type: "int", nullable: false),
+                    StudentId = table.Column<int>(type: "int", nullable: false),
+                    Score = table.Column<double>(type: "float", nullable: false),
+                    Feedback = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SubmittedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Submissions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Submissions_Assignments_AssignmentId",
+                        column: x => x.AssignmentId,
+                        principalTable: "Assignments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Submissions_Students_StudentId",
                         column: x => x.StudentId,
                         principalTable: "Students",
                         principalColumn: "Id");
@@ -117,55 +171,17 @@ namespace SIMSWeb.Data.Migrations
                 columns: new[] { "Id", "CreatedAt", "Email", "Name", "Password", "Role" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2025, 7, 30, 20, 59, 51, 955, DateTimeKind.Local).AddTicks(3704), "admin@gmail.com", "Admin", "admin", "Admin" },
-                    { 2, new DateTime(2025, 7, 30, 20, 59, 51, 955, DateTimeKind.Local).AddTicks(3713), "keya@gmail.com", "Keya", "stud", "Student" },
-                    { 3, new DateTime(2025, 7, 30, 20, 59, 51, 955, DateTimeKind.Local).AddTicks(3714), "tiya@gmail.com", "Tiya", "staff", "Teacher" },
-                    { 4, new DateTime(2025, 7, 30, 20, 59, 51, 955, DateTimeKind.Local).AddTicks(3715), "nav@gmail.com", "Naveen", "staff", "Teacher" },
-                    { 5, new DateTime(2025, 7, 30, 20, 59, 51, 955, DateTimeKind.Local).AddTicks(3716), "sid@gmail.com", "Sid", "stud", "Student" }
+                    { 1, new DateTime(2025, 8, 21, 18, 14, 51, 923, DateTimeKind.Local).AddTicks(2084), "admin@gmail.com", "Admin", "$2a$10$Y5Kbsws5Ilj4owR3NnzSTOj8SlPblzoJCu9MGTGnPQBzW/D8xi6b6", "Admin" },
+                    { 2, new DateTime(2025, 8, 21, 18, 14, 51, 991, DateTimeKind.Local).AddTicks(1806), "keya@gmail.com", "Keya", "$2a$10$ewcEyPCpVjkINaeXEWTmAuea7y1hF1h3MC6Ba48xBMcTWSbnxawAa", "Student" },
+                    { 3, new DateTime(2025, 8, 21, 18, 14, 52, 59, DateTimeKind.Local).AddTicks(1132), "tiya@gmail.com", "Tiya", "$2a$10$Pn7QVmtTTsZRLKQIrVFB.eUX1WJLulJ1Z4q9N7dz8j1RHJEsbVrnW", "Teacher" },
+                    { 4, new DateTime(2025, 8, 21, 18, 14, 52, 127, DateTimeKind.Local).AddTicks(1699), "nav@gmail.com", "Naveen", "$2a$10$9cWW4ulXph6W3D8nCfVwye5ftE3k0mqDmJEaKedbMbHPjcsyhdhDW", "Teacher" },
+                    { 5, new DateTime(2025, 8, 21, 18, 14, 52, 195, DateTimeKind.Local).AddTicks(6630), "sid@gmail.com", "Sid", "$2a$10$EDfXbEcKSuTh8AI/WCs5wuUUCcQdEbJEA1ZULoVVGtMUDDMDwE/h.", "Student" }
                 });
 
-            migrationBuilder.InsertData(
-                table: "Students",
-                columns: new[] { "Id", "EnrollmentDate", "UserId" },
-                values: new object[,]
-                {
-                    { 1, new DateTime(2025, 7, 30, 20, 59, 51, 955, DateTimeKind.Local).AddTicks(3793), 2 },
-                    { 2, new DateTime(2025, 7, 30, 20, 59, 51, 955, DateTimeKind.Local).AddTicks(3794), 3 }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Teachers",
-                columns: new[] { "Id", "Department", "HireDate", "UserId" },
-                values: new object[,]
-                {
-                    { 1, "Mathematics", new DateTime(2025, 7, 30, 20, 59, 51, 955, DateTimeKind.Local).AddTicks(3801), 3 },
-                    { 2, "Physics", new DateTime(2025, 7, 30, 20, 59, 51, 955, DateTimeKind.Local).AddTicks(3802), 4 }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Courses",
-                columns: new[] { "Id", "IsActive", "Name", "TeacherId" },
-                values: new object[] { 1, true, "Algebra", 1 });
-
-            migrationBuilder.InsertData(
-                table: "Courses",
-                columns: new[] { "Id", "IsActive", "Name", "TeacherId" },
-                values: new object[] { 2, true, "Physics 101", 2 });
-
-            migrationBuilder.InsertData(
-                table: "Enrollments",
-                columns: new[] { "CourseId", "StudentId", "Comments", "Marks", "Term" },
-                values: new object[] { 1, 1, "", 70.0, 1 });
-
-            migrationBuilder.InsertData(
-                table: "Enrollments",
-                columns: new[] { "CourseId", "StudentId", "Comments", "Marks", "Term" },
-                values: new object[] { 2, 1, "", 65.0, 1 });
-
-            migrationBuilder.InsertData(
-                table: "Enrollments",
-                columns: new[] { "CourseId", "StudentId", "Comments", "Marks", "Term" },
-                values: new object[] { 2, 2, "", 50.0, 1 });
+            migrationBuilder.CreateIndex(
+                name: "IX_Assignments_CourseId",
+                table: "Assignments",
+                column: "CourseId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Courses_TeacherId",
@@ -184,6 +200,16 @@ namespace SIMSWeb.Data.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Submissions_AssignmentId",
+                table: "Submissions",
+                column: "AssignmentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Submissions_StudentId",
+                table: "Submissions",
+                column: "StudentId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Teachers_UserId",
                 table: "Teachers",
                 column: "UserId",
@@ -196,10 +222,16 @@ namespace SIMSWeb.Data.Migrations
                 name: "Enrollments");
 
             migrationBuilder.DropTable(
-                name: "Courses");
+                name: "Submissions");
+
+            migrationBuilder.DropTable(
+                name: "Assignments");
 
             migrationBuilder.DropTable(
                 name: "Students");
+
+            migrationBuilder.DropTable(
+                name: "Courses");
 
             migrationBuilder.DropTable(
                 name: "Teachers");

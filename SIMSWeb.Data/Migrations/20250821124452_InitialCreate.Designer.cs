@@ -12,8 +12,8 @@ using SIMSWeb.Data.Context;
 namespace SIMSWeb.Data.Migrations
 {
     [DbContext(typeof(SIMSDBContext))]
-    [Migration("20250808023443_AddDbSetForNewEntities")]
-    partial class AddDbSetForNewEntities
+    [Migration("20250821124452_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -53,26 +53,6 @@ namespace SIMSWeb.Data.Migrations
                     b.HasIndex("CourseId");
 
                     b.ToTable("Assignments");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CourseId = 1,
-                            Description = "Solve all exercises in chapter 3",
-                            DueDate = new DateTime(2025, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            MaxScore = 25,
-                            Title = "Algebra Homework"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CourseId = 11,
-                            Description = "Complete the lab report for week 1",
-                            DueDate = new DateTime(2025, 9, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            MaxScore = 50,
-                            Title = "Lab Report"
-                        });
                 });
 
             modelBuilder.Entity("SIMSWeb.Model.Models.Course", b =>
@@ -104,26 +84,6 @@ namespace SIMSWeb.Data.Migrations
                     b.HasIndex("TeacherId");
 
                     b.ToTable("Courses");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Description = "",
-                            IsActive = true,
-                            IsCompleted = false,
-                            Name = "Algebra",
-                            TeacherId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Description = "",
-                            IsActive = true,
-                            IsCompleted = false,
-                            Name = "Physics 101",
-                            TeacherId = 2
-                        });
                 });
 
             modelBuilder.Entity("SIMSWeb.Model.Models.Enrollment", b =>
@@ -149,32 +109,6 @@ namespace SIMSWeb.Data.Migrations
                     b.HasIndex("CourseId");
 
                     b.ToTable("Enrollments");
-
-                    b.HasData(
-                        new
-                        {
-                            StudentId = 1,
-                            CourseId = 1,
-                            Comments = "",
-                            Marks = 70.0,
-                            Term = 1
-                        },
-                        new
-                        {
-                            StudentId = 1,
-                            CourseId = 2,
-                            Comments = "",
-                            Marks = 65.0,
-                            Term = 1
-                        },
-                        new
-                        {
-                            StudentId = 2,
-                            CourseId = 2,
-                            Comments = "",
-                            Marks = 50.0,
-                            Term = 1
-                        });
                 });
 
             modelBuilder.Entity("SIMSWeb.Model.Models.Student", b =>
@@ -197,20 +131,6 @@ namespace SIMSWeb.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("Students");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            EnrollmentDate = new DateTime(2025, 8, 8, 8, 4, 43, 180, DateTimeKind.Local).AddTicks(1465),
-                            UserId = 2
-                        },
-                        new
-                        {
-                            Id = 2,
-                            EnrollmentDate = new DateTime(2025, 8, 8, 8, 4, 43, 180, DateTimeKind.Local).AddTicks(1476),
-                            UserId = 3
-                        });
                 });
 
             modelBuilder.Entity("SIMSWeb.Model.Models.Submission", b =>
@@ -243,35 +163,6 @@ namespace SIMSWeb.Data.Migrations
                     b.HasIndex("StudentId");
 
                     b.ToTable("Submissions");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            AssignmentId = 1,
-                            Feedback = "Well done",
-                            Score = 95.0,
-                            StudentId = 1,
-                            SubmittedAt = new DateTime(2025, 8, 30, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = 2,
-                            AssignmentId = 1,
-                            Feedback = "",
-                            Score = 88.0,
-                            StudentId = 2,
-                            SubmittedAt = new DateTime(2025, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = 3,
-                            AssignmentId = 2,
-                            Feedback = "",
-                            Score = 45.0,
-                            StudentId = 1,
-                            SubmittedAt = new DateTime(2025, 9, 4, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        });
                 });
 
             modelBuilder.Entity("SIMSWeb.Model.Models.Teacher", b =>
@@ -297,22 +188,6 @@ namespace SIMSWeb.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("Teachers");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Department = "Mathematics",
-                            HireDate = new DateTime(2025, 8, 8, 8, 4, 43, 180, DateTimeKind.Local).AddTicks(7200),
-                            UserId = 3
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Department = "Physics",
-                            HireDate = new DateTime(2025, 8, 8, 8, 4, 43, 180, DateTimeKind.Local).AddTicks(7203),
-                            UserId = 4
-                        });
                 });
 
             modelBuilder.Entity("SIMSWeb.Model.Models.User", b =>
@@ -350,46 +225,46 @@ namespace SIMSWeb.Data.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2025, 8, 8, 8, 4, 43, 179, DateTimeKind.Local).AddTicks(8017),
+                            CreatedAt = new DateTime(2025, 8, 21, 18, 14, 51, 923, DateTimeKind.Local).AddTicks(2084),
                             Email = "admin@gmail.com",
                             Name = "Admin",
-                            Password = "admin",
+                            Password = "$2a$10$Y5Kbsws5Ilj4owR3NnzSTOj8SlPblzoJCu9MGTGnPQBzW/D8xi6b6",
                             Role = "Admin"
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2025, 8, 8, 8, 4, 43, 179, DateTimeKind.Local).AddTicks(8028),
+                            CreatedAt = new DateTime(2025, 8, 21, 18, 14, 51, 991, DateTimeKind.Local).AddTicks(1806),
                             Email = "keya@gmail.com",
                             Name = "Keya",
-                            Password = "stud",
+                            Password = "$2a$10$ewcEyPCpVjkINaeXEWTmAuea7y1hF1h3MC6Ba48xBMcTWSbnxawAa",
                             Role = "Student"
                         },
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2025, 8, 8, 8, 4, 43, 179, DateTimeKind.Local).AddTicks(8029),
+                            CreatedAt = new DateTime(2025, 8, 21, 18, 14, 52, 59, DateTimeKind.Local).AddTicks(1132),
                             Email = "tiya@gmail.com",
                             Name = "Tiya",
-                            Password = "staff",
+                            Password = "$2a$10$Pn7QVmtTTsZRLKQIrVFB.eUX1WJLulJ1Z4q9N7dz8j1RHJEsbVrnW",
                             Role = "Teacher"
                         },
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateTime(2025, 8, 8, 8, 4, 43, 179, DateTimeKind.Local).AddTicks(8030),
+                            CreatedAt = new DateTime(2025, 8, 21, 18, 14, 52, 127, DateTimeKind.Local).AddTicks(1699),
                             Email = "nav@gmail.com",
                             Name = "Naveen",
-                            Password = "staff",
+                            Password = "$2a$10$9cWW4ulXph6W3D8nCfVwye5ftE3k0mqDmJEaKedbMbHPjcsyhdhDW",
                             Role = "Teacher"
                         },
                         new
                         {
                             Id = 5,
-                            CreatedAt = new DateTime(2025, 8, 8, 8, 4, 43, 179, DateTimeKind.Local).AddTicks(8030),
+                            CreatedAt = new DateTime(2025, 8, 21, 18, 14, 52, 195, DateTimeKind.Local).AddTicks(6630),
                             Email = "sid@gmail.com",
                             Name = "Sid",
-                            Password = "stud",
+                            Password = "$2a$10$EDfXbEcKSuTh8AI/WCs5wuUUCcQdEbJEA1ZULoVVGtMUDDMDwE/h.",
                             Role = "Student"
                         });
                 });

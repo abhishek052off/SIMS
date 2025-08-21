@@ -1,0 +1,42 @@
+version: '3.9'
+
+services:
+  myapi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sims-api
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+    environment:
+      - ConnectionStrings__SIMSDBConnection=Server=db;Database=${DB_NAME};User Id=${DB_USER};Password=${DB_PASSWORD};
+    restart: always
+
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sims-sqlserver
+    user: root
+    environment:
+      SA_PASSWORD: "${DB_PASSWORD}"
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: "Express"
+    volumes:
+      - db_data:/var/opt/mssql
+    ports:
+      - "1433:1433"
+    restart: always
+
+  adminer:
+    image: adminer
+    container_name: sims-adminer
+    restart: always
+    ports:
+      - "8082:8080"
+    depends_on:
+      - db
+
+volumes:
+  db_data:
+    driver: local
