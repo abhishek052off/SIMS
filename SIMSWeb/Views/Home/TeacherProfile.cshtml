@@ -57,60 +57,75 @@
                 {
                     <div class="table-responsive">
                         <table class="table table-bordered table-striped">
-                        <thead>
-                            <tr>
-                                <th>Course Name</th>
-                                <th>Students Enrolled</th>
-                                <th>Assignments Created</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var course in Model.TeacherCourses)
-                            {
+                            <thead>
                                 <tr>
-                                    <td>@course.CourseName</td>
-                                    <td>
-                                        @if (course.StudentsEnrolled.Count > 0)
-                                        {
-                                            <ul class="list-group mb-4">
-                                                @foreach (var student in course.StudentsEnrolled)
-                                                {
-                                                    <li class="list-group-item">
-                                                        @student
-                                                    </li>
-
-                                                }
-
-                                            </ul>
-                                        }
-                                        else
-                                        {
-                                            <span>No students enrolled</span>
-                                        }
-                                    </td>
-                                    <td>
-                                        @if (course.AssignmentCreated.Count > 0)
-                                        {
-                                            <ul class="list-group mb-4">
-                                                @foreach (var assignment in course.AssignmentCreated)
-                                                {
-                                                    <li class="list-group-item">
-                                                        @assignment
-                                                    </li>
-
-                                                }
-
-                                            </ul>
-                                        }
-                                        else
-                                        {
-                                            <div>No assignments created</div>
-                                        }
-                                    </td>
+                                    <th>Course Name</th>
+                                    <th>Students Enrolled</th>
+                                    <th>Assignments Created</th>
+                                    <th></th>
                                 </tr>
-                            }
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                @foreach (var course in Model.TeacherCourses)
+                                {
+                                    <tr>
+                                        <td>@course.CourseName</td>
+                                        <td>
+                                            @if (course.StudentsEnrolled.Count > 0)
+                                            {
+                                                <ul class="mb-4">
+                                                    @foreach (var student in course.StudentsEnrolled)
+                                                    {
+                                                        <li>
+                                                            @student
+                                                        </li>
+
+                                                    }
+
+                                                </ul>
+                                            }
+                                            else
+                                            {
+                                                <span class="p-3">No students enrolled</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (course.AssignmentCreated.Count > 0)
+                                            {
+                                                <ul class="mb-4">
+                                                    @foreach (var assignment in course.AssignmentCreated)
+                                                    {
+                                                        <li class="gap-2">
+                                                            <span>
+                                                                @assignment.AssignmentName
+                                                            </span>
+                                                            <span>
+                                                                <a target="_blank" asp-action="EditAssignment" asp-controller="Assignment" asp-route-id="@assignment.AssignmentId"
+                                                                   asp-route-courseId="@course.Id" class="icon-link btn-sm"
+                                                                   title="Edit Assignment">
+                                                                    <i class="bi bi-pencil"></i>
+                                                                </a>
+                                                            </span>
+                                                        </li>
+
+                                                    }
+                                                </ul>
+                                            }
+                                            else
+                                            {
+                                                <div class="p-3">No assignments created</div>
+                                            }
+                                        </td>
+                                        <td>
+                                            <a target="_blank" class="text-primary text-decoration-none" asp-controller="Assignment"
+                                               asp-action="AddAssignment" asp-route-courseId="@course.Id">
+                                                Add Assignment
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
                     </div>
                 }
                 else

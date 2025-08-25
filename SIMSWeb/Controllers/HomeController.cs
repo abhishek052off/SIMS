@@ -22,7 +22,7 @@ namespace SIMSWeb.Controllers
         private readonly IStudentService _studentService;
         private readonly ITeacherService _teacherService;
 
-        public HomeController(ILogger<HomeController> logger, IUserService userService, 
+        public HomeController(ILogger<HomeController> logger, IUserService userService,
             UserSession session, ICourseService courseService, ITeacherService teacherService,
             IStudentService studentService)
         {
@@ -108,7 +108,7 @@ namespace SIMSWeb.Controllers
             if (string.IsNullOrEmpty(_session.Email))
             {
                 return View(teacherProfile);
-            }              
+            }
 
             teacherProfile.User = new User();
             var user = await _userService.GetUserByEmail(_session.Email);
@@ -124,15 +124,20 @@ namespace SIMSWeb.Controllers
                 CourseName = e.Course.Name,
             }).ToList();
 
-            teacherProfile.RecentlyEnrolledStudents = recentEnrollments;            
+            teacherProfile.RecentlyEnrolledStudents = recentEnrollments;
 
             var coursesByTeacher = await _courseService.GetCoursesByUserId(_session.Id, 0, string.Empty, 0, 0);
 
             var coursesByTeacherInfo = coursesByTeacher.Select(c => new TeacherCourses
             {
+                Id = c.Id,
                 CourseName = c.Name,
                 StudentsEnrolled = c.Enrollments.Select(e => e.Student.User.Name).ToList(),
-                AssignmentCreated = c.Assignments.Select(a => a.Title).ToList(),
+                AssignmentCreated = c.Assignments.Select(a => new AssignmentList
+                {
+                    AssignmentId = a.Id,
+                    AssignmentName = a.Title
+                }).ToList(),
             }).ToList();
 
             teacherProfile.TeacherCourses = coursesByTeacherInfo;
@@ -159,13 +164,14 @@ namespace SIMSWeb.Controllers
 
             studentProfile.User = new User();
             var user = await _userService.GetUserByEmail(_session.Email);
-            studentProfile.User = user;            
+            studentProfile.User = user;
 
             var enrolledCourses = await _courseService.GetCoursesByUserId(_session.Id, 0, string.Empty, 0, 0);
 
             var enrolledCoursesInfo = enrolledCourses.Select(c => new EnrolledCourses
             {
-                CourseName = c.Name,                
+                Id = c.Id,
+                CourseName = c.Name,
                 AssignmentCreated = c.Assignments.Select(a => a.Title).ToList(),
             }).ToList();
 
@@ -186,11 +192,11 @@ namespace SIMSWeb.Controllers
 
             studentProfile.StudentProfileMetrics.MaximumMarks = enrolledCourses
                 .SelectMany(course => course.Assignments)
-                .SelectMany (assignment => assignment.Submissions)
+                .SelectMany(assignment => assignment.Submissions)
                 .Where(submission => submission.Student.UserId == _session.Id)
                 .Max(submission => submission.Score);
 
-            var studentProgress = await _courseService.GetProgressofStudent(_session.Id);            
+            var studentProgress = await _courseService.GetProgressofStudent(_session.Id);
 
             studentProfile.AssignmentProgress = studentProgress;
 

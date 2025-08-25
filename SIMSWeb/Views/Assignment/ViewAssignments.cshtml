@@ -26,7 +26,7 @@
                     @if (!User.IsInRole("Student"))
                     {
                         <a class="btn btn-outline-primary" asp-controller="Assignment"
-                            asp-action="Add Assignment" asp-route-id="@ViewBag.CourseId">
+                            asp-action="AddAssignment" asp-route-courseId="@ViewBag.CourseId">
                             Add Assignment
                         </a>
                     }

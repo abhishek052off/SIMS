@@ -256,6 +256,7 @@ namespace SIMSWeb.Data.Repository
                 .GroupBy(submission => submission.AssignmentId)
                 .Select(group => new AssignmentProgress
                 {
+                    CourseName = group.First().Assignment.Course.Name,
                     AssignmentTitle = group.First().Assignment.Title,
                     Score = group.Max(submission => submission.Score),
                     MaxScore = group.First().Assignment.MaxScore,

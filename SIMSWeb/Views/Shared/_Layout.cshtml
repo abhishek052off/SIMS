@@ -14,7 +14,7 @@
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-primary border-bottom box-shadow mb-4" 
-        data-bs-theme="dark" style="height: 60px">
+        data-bs-theme="dark">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
                     <span class="mt-4">
@@ -32,9 +32,10 @@
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                 @if (User.Identity.IsAuthenticated)
                 {
-                    <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                   
                         <ul class="navbar-nav flex-grow-1">
                             <li class="nav-item">
                                 <a class="nav-link text-light" asp-area=""
@@ -52,7 +53,7 @@
                                    asp-action="ManageCourses"> Courses</a>
                             </li>
                         </ul>
-                    </div>
+                   
                 }
                 <div class="d-flex">
                     @if (User.Identity.IsAuthenticated)
@@ -72,6 +73,7 @@
                     {
                         <a class="btn btn-primary my-2 my-sm-0" asp-area="" asp-controller="Login">Login</a>
                     }
+                </div>
                 </div>
             </div>
         </nav>

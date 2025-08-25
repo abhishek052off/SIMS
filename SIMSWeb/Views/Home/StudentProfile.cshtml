@@ -82,40 +82,50 @@
                 {
                     <div class="table-responsive">
                         <table class="table table-bordered table-striped">
-                        <thead>
-                            <tr>
-                                <th>Course Name</th>
-                                <th>Assignments</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var course in Model.EnrolledCourses)
-                            {
+                            <thead>
                                 <tr>
-                                    <td>@course.CourseName</td>
-                                    <td>
-                                        @if (course.AssignmentCreated.Count > 0)
-                                        {
-                                            <ul class="list-group mb-4">
-                                                @foreach (var assignment in course.AssignmentCreated)
-                                                {
-                                                    <li class="list-group-item">
-                                                        @assignment
-                                                    </li>
-
-                                                }
-
-                                            </ul>
-                                        }
-                                        else
-                                        {
-                                            <div>No assignments created</div>
-                                        }
-                                    </td>
+                                    <th>Course Name</th>
+                                    <th>Assignments</th>
+                                    <th></th>
                                 </tr>
-                            }
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                @foreach (var course in Model.EnrolledCourses)
+                                {
+                                    <tr>
+                                        <td>@course.CourseName</td>
+                                        <td>
+                                            @if (course.AssignmentCreated.Count > 0)
+                                            {
+                                                <ul class="mb-4">
+                                                    @foreach (var assignment in course.AssignmentCreated)
+                                                    {
+                                                        <li>
+                                                            @assignment
+                                                        </li>
+
+                                                    }
+
+                                                </ul>
+                                            }
+                                            else
+                                            {
+                                                <div class="p-3">No assignments created</div>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (course.AssignmentCreated.Count > 0)
+                                            {
+                                                <a target="_blank" class="text-primary text-decoration-none g-2" asp-controller="Assignment"
+                                                   asp-action="ViewAssignments" asp-route-courseId="@course.Id" title="View Assignments">
+                                                    View assignments
+                                                </a>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
                     </div>
                 }
                 else
@@ -160,8 +170,9 @@
                     }
 
 
-                    <div class="col-md-4">
+                    <div class="col-md-4">                       
                         <div class="progress-card @bgColor">
+                            <h5 class="fw-bold">@progress.CourseName</h5>
                             <p class="fw-bold">@progress.AssignmentTitle</p>
                             <p class="fs-4 @color">Score: @progress.Score / @progress.MaxScore</p>
                         </div>

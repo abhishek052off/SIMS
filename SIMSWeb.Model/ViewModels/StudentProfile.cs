@@ -19,12 +19,14 @@ namespace SIMSWeb.Model.ViewModels
 
     public class EnrolledCourses
     {
+        public int Id { get; set; }
         public string CourseName { get; set; }
         public List<string> AssignmentCreated { get; set; }
     }
 
     public class AssignmentProgress
     {
+        public string CourseName { get; set; }
         public string AssignmentTitle { get; set; }
         public double Score { get; set; }
         public double MaxScore { get; set; }
