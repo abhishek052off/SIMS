@@ -146,6 +146,7 @@
         <div class="card-header h5 fw-bold">Student Progress Card</div>
         <div class="card-body">
             <div class="row">
+                @if(Model.AssignmentProgress.Count > 0){
                 @foreach (var progress in Model.AssignmentProgress)
                 {
                     var bgColor = "bg-success-subtle";
@@ -177,6 +178,16 @@
                             <p class="fs-4 @color">Score: @progress.Score / @progress.MaxScore</p>
                         </div>
                     </div>
+                    }
+                }
+                else
+                {
+                    var message = new NoDataViewModel
+                    {
+                        message = "Progress card is not yet generated."
+                    };
+
+                    <partial name="_NoDataPartial" model="@message" />
                 }
             </div>
         </div>

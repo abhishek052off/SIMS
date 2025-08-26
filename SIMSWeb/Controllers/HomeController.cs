@@ -190,11 +190,20 @@ namespace SIMSWeb.Controllers
             .Where(submission => submission.Student.UserId == _session.Id)
             .Count(submission => submission.SubmittedAt != null);
 
-            studentProfile.StudentProfileMetrics.MaximumMarks = enrolledCourses
+            var studentSubmissions = enrolledCourses
                 .SelectMany(course => course.Assignments)
                 .SelectMany(assignment => assignment.Submissions)
-                .Where(submission => submission.Student.UserId == _session.Id)
-                .Max(submission => submission.Score);
+                .Where(submission => submission.Student.UserId == _session.Id);
+
+            if (studentSubmissions.Any())
+            {
+                studentProfile.StudentProfileMetrics.MaximumMarks = studentSubmissions.Max(submission => submission.Score);
+            }
+            else
+            {
+                studentProfile.StudentProfileMetrics.MaximumMarks = 0;
+            }
+                
 
             var studentProgress = await _courseService.GetProgressofStudent(_session.Id);
 
