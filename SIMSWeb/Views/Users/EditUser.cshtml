@@ -31,7 +31,7 @@
         </div>
         <div class="mb-3">
             <label>Role</label>
-            <select asp-for="Role" class="form-select" disabled="@(Model.Name == "Admin")">
+            <select asp-for="Role" class="form-select" disabled="@(Model.Name == "Admin")" >
                 <option value=@UsersConstants.ADMIN_ROLE>Admin</option>
                 <option value=@UsersConstants.TEACHER_ROLE>Teacher</option>
                 <option value=@UsersConstants.STUDENT_ROLE>Student</option>

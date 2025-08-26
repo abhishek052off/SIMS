@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SIMSWeb.ConstantsAndUtilities.AuthUtilities;
 using SIMSWeb.Model.ViewModels;
+using SIMSWeb.Business.ServiceDTO.User;
 
 namespace SIMSWeb.Business.Service
 {
@@ -78,7 +79,7 @@ namespace SIMSWeb.Business.Service
             return users;
         }
 
-        public async Task UpdateUser(UserViewModel userRequest)
+        public async Task<UpdateResponseDTO> UpdateUser(UserViewModel userRequest)
         {
             var user = await _userRepository.GetUserById(userRequest.Id);
             if (user == null)
@@ -96,10 +97,13 @@ namespace SIMSWeb.Business.Service
                 user.Email = userRequest.Email;
             }
 
-            var isPasswordSame = PasswordUtility.VerifyPassword(userRequest.Password, user.Password);
-            if (!isPasswordSame)
+            if (!string.IsNullOrEmpty(userRequest.Password))
             {
-                user.Password = PasswordUtility.HashPassword(userRequest.Password);
+                var isPasswordSame = PasswordUtility.VerifyPassword(userRequest.Password, user.Password);
+                if (!isPasswordSame)
+                {
+                    user.Password = PasswordUtility.HashPassword(userRequest.Password);
+                }
             }
 
             if (user.Role != userRequest.Role)
@@ -109,39 +113,66 @@ namespace SIMSWeb.Business.Service
                 // Existing Role = Teacher now changed to Student
                 if (userRequest.Role == UsersConstants.STUDENT_ROLE)
                 {
-                    //Add to Student table
-                    var student = new Student
+                    if (user.Teacher.Courses.Count > 0)
                     {
-                        UserId = user.Id,
-                        EnrollmentDate = DateTime.Now,
-                    };
+                        return new UpdateResponseDTO
+                        {
+                            Success = false,
+                            Message = "Role update is not allowed for teacher who are assigned course."
+                        };
+                    }
+                    else
+                    {
+                        //Add to Student table
+                        var student = new Student
+                        {
+                            UserId = user.Id,
+                            EnrollmentDate = DateTime.Now,
+                        };
 
-                    await _studentRepository.AddStudent(student);
+                        await _studentRepository.AddStudent(student);
 
-                    //Remove from Teacher table
-                    var teacher = await _teacherRepository.GetTeacherByUserId(user.Id);
+                        //Remove from Teacher table
+                        var teacher = await _teacherRepository.GetTeacherByUserId(user.Id);
 
-                    await _teacherRepository.DeleteTeacher(teacher);
+                        await _teacherRepository.DeleteTeacher(teacher);
+                    }
 
                 }
                 else if (user.Role == UsersConstants.TEACHER_ROLE)
                 {
-                    //Remove from Student table
-                    var student = await _studentRepository.GetStudentByUserId(user.Id);
-
-                    await _studentRepository.DeleteStudent(student);
-
-                    var teacher = new Teacher
+                    if (user.Student.Enrollments.Count > 0)
                     {
-                        UserId = user.Id,
-                        HireDate = DateTime.Now,
-                    };
+                        return new UpdateResponseDTO
+                        {
+                            Success = false,
+                            Message = "Role update is not allowed for students who are currently enrolled."
+                        };
+                    }
+                    else
+                    {
+                        var teacher = new Teacher
+                        {
+                            UserId = user.Id,
+                            HireDate = DateTime.Now,
+                        };
 
-                    await _teacherRepository.AddTeacher(teacher);
+                        await _teacherRepository.AddTeacher(teacher);
+
+                        //Remove from Student table
+                        var student = await _studentRepository.GetStudentByUserId(user.Id);
+
+                        await _studentRepository.DeleteStudent(student);
+                    }
                 }
             }
 
             await _userRepository.UpdateUser(user);
+            return new UpdateResponseDTO
+            {
+                Success = false,
+                Message = "User updated successfully."
+            };
 
         }
 
@@ -157,7 +188,7 @@ namespace SIMSWeb.Business.Service
 
         public async Task<int> GetUserCount(string userRole, string searchText)
         {
-            return await _userRepository.GetUserCount(userRole,searchText);
+            return await _userRepository.GetUserCount(userRole, searchText);
         }
     }
 }

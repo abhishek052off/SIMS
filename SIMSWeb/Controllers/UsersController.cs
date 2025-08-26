@@ -126,8 +126,16 @@ namespace SIMSWeb.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _userService.UpdateUser(userRequest);
-                TempData["success"] = "User updated successfully";
+                var response = await _userService.UpdateUser(userRequest);
+
+                if (response.Success)
+                {
+                    TempData["success"] = response.Message;
+                } else
+                {
+                    TempData["error"] = response.Message;
+                }
+                    
                 return RedirectToAction("ManageUsers");
             }
             return View();

@@ -70,6 +70,10 @@ namespace SIMSWeb.Data.Repository
         public async Task<User> GetUserById(int id)
         {
             var user = await _dbContext.Users
+                    .Include(u => u.Student)
+                        .ThenInclude(s => s.Enrollments)
+                    .Include(u => u.Teacher)
+                        .ThenInclude(t => t.Courses)
                 .Where(u => u.Id == id)
                 .FirstOrDefaultAsync() ?? throw new NotFoundException("User not found");
             return user;
