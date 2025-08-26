@@ -170,7 +170,7 @@ namespace SIMSWeb.Business.Service
             await _userRepository.UpdateUser(user);
             return new UpdateResponseDTO
             {
-                Success = false,
+                Success = true,
                 Message = "User updated successfully."
             };
 
